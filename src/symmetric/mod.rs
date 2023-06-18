@@ -99,7 +99,7 @@ fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Res
 }
 
 fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Result<Vec<u8>> {
-    let mut cipher = aead
+    let cipher = aead
         .encrypt(
             nonce.into(),
             Payload {
