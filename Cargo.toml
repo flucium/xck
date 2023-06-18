@@ -6,3 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+#rust-random
+
+#/rand/
+rand = "0.8.5"
+
+#/rand/rand_core/
+rand_core="0.5.0"
+
+#/rand/rand_chacha/
+rand_chacha = "0.3.1"
