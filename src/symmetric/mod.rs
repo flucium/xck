@@ -3,7 +3,6 @@ mod chacha;
 use self::chacha::{ChaCha20Poly1305, XChaCha20Poly1305};
 
 use crate::{
-    rand::generate,
     size::{SIZE_U12, SIZE_U24, SIZE_U32},
     Error, ErrorKind, Result,
 };
