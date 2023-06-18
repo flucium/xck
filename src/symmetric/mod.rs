@@ -4,7 +4,7 @@ use self::chacha::{ChaCha20Poly1305, XChaCha20Poly1305};
 
 use crate::{
     rand::generate,
-    size::{SIZE_U12, SIZE_U32},
+    size::{SIZE_U12, SIZE_U24, SIZE_U32},
     Error, ErrorKind, Result,
 };
 
@@ -13,11 +13,13 @@ use aead::{Aead, KeyInit, Payload};
 pub enum Symmetric<'a> {
     ChaCha20Poly1305 {
         key: Box<[u8; SIZE_U32]>,
+        nonce: Box<[u8; SIZE_U12]>,
         aad: &'a [u8],
         msg: &'a [u8],
     },
     XChaCha20Poly1305 {
         key: Box<[u8; SIZE_U32]>,
+        nonce: Box<[u8; SIZE_U24]>,
         aad: &'a [u8],
         msg: &'a [u8],
     },
@@ -26,17 +28,27 @@ pub enum Symmetric<'a> {
 impl Symmetric<'_> {
     pub fn encrypt(self) -> Result<Vec<u8>> {
         match self {
-            Self::ChaCha20Poly1305 { key, aad, msg } => aead_encrypt(
+            Self::ChaCha20Poly1305 {
+                key,
+                nonce,
+                aad,
+                msg,
+            } => aead_encrypt(
                 ChaCha20Poly1305::new_from_slice(&*key)
                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-                SIZE_U12,
+                &*nonce,
                 aad,
                 msg,
             ),
-            Self::XChaCha20Poly1305 { key, aad, msg } => aead_encrypt(
+            Self::XChaCha20Poly1305 {
+                key,
+                nonce,
+                aad,
+                msg,
+            } => aead_encrypt(
                 XChaCha20Poly1305::new_from_slice(&*key)
                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-                SIZE_U12,
+                &*nonce,
                 aad,
                 msg,
             ),
@@ -45,17 +57,27 @@ impl Symmetric<'_> {
 
     pub fn decrypt(self) -> Result<Vec<u8>> {
         match self {
-            Self::ChaCha20Poly1305 { key, aad, msg } => aead_decrypt(
+            Self::ChaCha20Poly1305 {
+                key,
+                nonce,
+                aad,
+                msg,
+            } => aead_decrypt(
                 ChaCha20Poly1305::new_from_slice(&*key)
                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-                SIZE_U12,
+                &*nonce,
                 aad,
                 msg,
             ),
-            Self::XChaCha20Poly1305 { key, aad, msg } => aead_decrypt(
+            Self::XChaCha20Poly1305 {
+                key,
+                nonce,
+                aad,
+                msg,
+            } => aead_decrypt(
                 XChaCha20Poly1305::new_from_slice(&*key)
                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-                SIZE_U12,
+                &*nonce,
                 aad,
                 msg,
             ),
@@ -63,19 +85,7 @@ impl Symmetric<'_> {
     }
 }
 
-fn aead_decrypt(aead: impl Aead, nonce_size: usize, aad: &[u8], cipher: &[u8]) -> Result<Vec<u8>> {
-    let len = cipher.len() - nonce_size;
-
-    let nonce = match cipher.get(len..) {
-        None => return Err(Error::new(ErrorKind::Todo, "".to_string())),
-        Some(nonce) => nonce,
-    };
-
-    let cipher = match cipher.get(..len) {
-        None => return Err(Error::new(ErrorKind::Todo, "".to_string())),
-        Some(cipher) => cipher,
-    };
-
+fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Result<Vec<u8>> {
     let plain = aead
         .decrypt(
             nonce.into(),
@@ -89,10 +99,7 @@ fn aead_decrypt(aead: impl Aead, nonce_size: usize, aad: &[u8], cipher: &[u8]) -
     Ok(plain)
 }
 
-fn aead_encrypt(aead: impl Aead, nonce_size: usize, aad: &[u8], plain: &[u8]) -> Result<Vec<u8>> {
-    let r = generate();
-    let nonce = r.get(0..nonce_size).unwrap();
-
+fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Result<Vec<u8>> {
     let mut cipher = aead
         .encrypt(
             nonce.into(),
@@ -102,8 +109,6 @@ fn aead_encrypt(aead: impl Aead, nonce_size: usize, aad: &[u8], plain: &[u8]) ->
             },
         )
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    cipher.append(&mut nonce.to_vec());
 
     Ok(cipher)
 }
