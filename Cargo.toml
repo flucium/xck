@@ -37,6 +37,8 @@ poly1305 = "0.8.0"
 #/hashes/
 sha2 = "0.10.6"
 
+#BLAKE3-team/BLAKE3
+blake3 = "1.3.3"
 
 
 [features]
