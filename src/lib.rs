@@ -2,6 +2,7 @@ pub mod rand;
 pub mod size;
 pub mod symmetric;
 pub mod hash;
+pub mod deflate;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
