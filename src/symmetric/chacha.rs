@@ -9,6 +9,9 @@ use chacha20::{
     ChaCha20, XChaCha20,
 };
 
+// #[cfg(feature = "reduced-round")]
+// use chacha20::{ChaCha12, ChaCha8, XChaCha12, XChaCha8};
+
 use poly1305::{universal_hash::UniversalHash, Key as Poly1305Key, Poly1305};
 
 use zeroize::Zeroize;
