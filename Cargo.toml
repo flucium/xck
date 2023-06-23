@@ -30,7 +30,7 @@ aead = {version="0.5.2", default-features = false}
 digest = "0.10.6"
 
 #/utils/
-zeroize = "1.3.0"
+zeroize = {version="1.6.0",default-features = false}
 
 #/stream-ciphers/
 chacha20 = "0.9.1"
@@ -44,10 +44,7 @@ sha2 = "0.10.6"
 #BLAKE3-team/BLAKE3
 blake3 = "1.3.3"
 
-
 [features]
 default = ["alloc"]
 
 alloc = ["aead/alloc"]
-
-std = ["aead/std", "alloc"]
