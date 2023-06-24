@@ -1,5 +1,5 @@
 use crate::{
-    size::{SIZE_U12, SIZE_U24, SIZE_U32},
+    size::{SIZE_12, SIZE_24, SIZE_32},
     Error, ErrorKind, Result,
 };
 use aead::{Aead, KeyInit, Payload};
@@ -7,14 +7,14 @@ use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 
 pub enum Symmetric<'a> {
     ChaCha20Poly1305 {
-        key: Box<[u8; SIZE_U32]>,
-        nonce: Box<[u8; SIZE_U12]>,
+        key: Box<[u8; SIZE_32]>,
+        nonce: Box<[u8; SIZE_12]>,
         aad: &'a [u8],
         msg: &'a [u8],
     },
     XChaCha20Poly1305 {
-        key: Box<[u8; SIZE_U32]>,
-        nonce: Box<[u8; SIZE_U24]>,
+        key: Box<[u8; SIZE_32]>,
+        nonce: Box<[u8; SIZE_24]>,
         aad: &'a [u8],
         msg: &'a [u8],
     },
