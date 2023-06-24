@@ -1,4 +1,5 @@
-use crate::size::SIZE_32;
+use crate::size::{SIZE_32, SIZE_64};
+use sha2::{digest::Digest, Sha256, Sha512, Sha512_256};
 
 pub const BLAKE3_DEFAULT_CONTEXT: &str = "XCK VERSION 0.0.1 BLAKE3 DEFAULT CONTEXT";
 
@@ -16,4 +17,16 @@ pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
 
 pub fn blake3_mac(key: [u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
     blake3::keyed_hash(&key, message).into()
+}
+
+pub fn sha256(bytes: &[u8]) -> [u8; SIZE_32] {
+    Sha256::digest(bytes).into()
+}
+
+pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
+    Sha512::digest(bytes).into()
+}
+
+pub fn sha512_256(bytes: &[u8]) -> [u8; SIZE_32] {
+    Sha512_256::digest(bytes).into()
 }
