@@ -1,5 +1,6 @@
 mod size;
 pub mod symmetric;
+pub mod rand;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
