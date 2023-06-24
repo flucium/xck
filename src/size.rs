@@ -17,4 +17,4 @@ pub const SIZE_32: usize = 32;
 // pub const SIZE_34: usize = 34;
 
 // 64-byte
-pub const SIZE_64: usize = 64;
+// pub const SIZE_64: usize = 64;
