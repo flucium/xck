@@ -5,6 +5,7 @@ use crate::{
 use aead::{Aead, KeyInit, Payload};
 use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 
+/// Symmetric ...
 pub enum Symmetric<'a> {
     ChaCha20Poly1305 {
         key: Box<[u8; SIZE_32]>,
@@ -21,6 +22,7 @@ pub enum Symmetric<'a> {
 }
 
 impl Symmetric<'_> {
+    /// Encrypt ...
     pub fn encrypt(self) -> Result<Vec<u8>> {
         match self {
             Self::ChaCha20Poly1305 {
@@ -50,6 +52,7 @@ impl Symmetric<'_> {
         }
     }
 
+    /// Decrypt ...
     pub fn decrypt(self) -> Result<Vec<u8>> {
         match self {
             Self::ChaCha20Poly1305 {
