@@ -33,3 +33,6 @@ ed25519-dalek = "1.0.1"
 
 #RustCrypto/rsa/
 #rsa = "0.9.2"
+
+#clap-rs/clap/
+clap = "4.3.8"
