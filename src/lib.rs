@@ -1,8 +1,8 @@
-mod size;
-pub mod symmetric;
-pub mod rand;
-pub mod hash;
 pub mod asymmetric;
+pub mod hash;
+pub mod rand;
+pub mod size;
+pub mod symmetric;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
