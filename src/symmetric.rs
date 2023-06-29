@@ -5,7 +5,7 @@ use crate::{
 use aead::{Aead, KeyInit, Payload};
 use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 
-pub fn chacha20poly1305_decrypt(
+pub fn chacha20poly1305_encrypt(
     key: [u8; SIZE_32],
     nonce: [u8; SIZE_12],
     aad: &[u8],
@@ -16,7 +16,7 @@ pub fn chacha20poly1305_decrypt(
     aead_encrypt(aead, &nonce, aad, plain)
 }
 
-pub fn chacha20poly1305_encrypt(
+pub fn chacha20poly1305_decrypt(
     key: [u8; SIZE_32],
     nonce: [u8; SIZE_12],
     aad: &[u8],
@@ -27,7 +27,7 @@ pub fn chacha20poly1305_encrypt(
     aead_decrypt(aead, &nonce, aad, cipher)
 }
 
-pub fn xchacha20poly1305_decrypt(
+pub fn xchacha20poly1305_encrypt(
     key: [u8; SIZE_32],
     nonce: [u8; SIZE_24],
     aad: &[u8],
@@ -38,7 +38,7 @@ pub fn xchacha20poly1305_decrypt(
     aead_encrypt(aead, &nonce, aad, plain)
 }
 
-pub fn xchacha20poly1305_encrypt(
+pub fn xchacha20poly1305_decrypt(
     key: [u8; SIZE_32],
     nonce: [u8; SIZE_24],
     aad: &[u8],
