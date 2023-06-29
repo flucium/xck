@@ -1,10 +1,15 @@
 use std::{
     self,
-    io::{self, stderr, Write},
+    io::{self, stderr, stdout, Write},
     process::exit,
 };
 
-use xck::size::SIZE_32;
+use clap::{
+    Args as ClapArgs, Parser as ClapParser, Subcommand as ClapSubcommand,
+    ValueEnum as ClapValueEnum,
+};
+
+use rand::{Rng, SeedableRng};
 
 const NAME: &str = "XCK";
 
@@ -14,101 +19,106 @@ const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
 
-fn app() -> clap::Command {
-    clap::Command::new(NAME)
-        .version(VERSION)
-        .author(AUTHOR)
-        .about(ABOUT)
-        .subcommands([clap::Command::new("chacha20-poly1305").args(app_symmetric_args())])
-        .subcommands([clap::Command::new("xchacha20-poly1305").args(app_symmetric_args())])
+#[derive(ClapParser)]
+#[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
+#[clap(disable_help_subcommand(true))]
+struct Command {
+    #[command(subcommand)]
+    subcommand: Subcommand,
 }
 
-fn app_symmetric_args() -> [clap::Arg; 4] {
-    [
-        clap::Arg::new("encrypt")
-            .long("encrypt")
-            .short('e')
-            .alias("enc")
-            .action(clap::ArgAction::SetTrue),
-        clap::Arg::new("decrypt")
-            .long("decrypt")
-            .short('d')
-            .alias("dec")
-            .action(clap::ArgAction::SetTrue),
-        clap::Arg::new("key")
-            .long("key")
-            .short('k')
-            .action(clap::ArgAction::Set)
-            .required(false),
-        clap::Arg::new("message")
-            .long("message")
-            .short('m')
-            .alias("msg")
-            .action(clap::ArgAction::Set)
-            .required(false),
-    ]
+#[derive(ClapSubcommand)]
+enum Subcommand {
+    #[command(name = "chacha20poly1305")]
+    ChaCha20Poly1305(ChaCha20Poly1305Args),
+
+    #[command(name = "xchacha20poly1305")]
+    XChaCha20Poly1305(XChaCha20Poly1305Args),
+
+    #[command(name = "random")]
+    #[clap(alias = "rand")]
+    Random(Random),
+}
+
+#[derive(ClapArgs)]
+struct ChaCha20Poly1305Args {
+    /// key is...
+    #[arg(long = "key", short = 'k')]
+    key: String,
+
+    /// aad is...
+    #[arg(long = "additionaldata", short = 'a')]
+    #[clap(alias = "aad")]
+    aad: String,
+
+    /// message is...
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
+#[derive(ClapArgs)]
+struct XChaCha20Poly1305Args {
+    /// key is...
+    #[arg(long = "key", short = 'k')]
+    key: String,
+
+    /// aad is...
+    #[arg(long = "additionaldata", short = 'a')]
+    #[clap(alias = "aad")]
+    aad: String,
+
+    /// message is...
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
+#[derive(ClapArgs)]
+struct Random {
+    // #[arg(long = "length", short = 'l', default_value = "32")]
+    // #[clap(alias = "len")]
+    // length: usize,
+    #[arg(long = "format", short = 'f', default_value = "bytes")]
+    #[clap(alias = "fmt")]
+    format: Format,
+}
+
+#[derive(Clone, ClapValueEnum)]
+enum Format {
+    String,
+    Bytes,
+    Hex,
+    Base64,
+}
+
+fn app() -> io::Result<()> {
+    let command = Command::parse();
+    match command.subcommand {
+        Subcommand::ChaCha20Poly1305(args) => todo!(),
+
+        Subcommand::XChaCha20Poly1305(args) => todo!(),
+
+        Subcommand::Random(args) => {
+            let bytes = xck::rand::generate();
+
+            match args.format {
+                Format::String => {
+                    stdout().write(String::from_utf8_lossy(&bytes).as_bytes())?;
+                }
+                Format::Hex => {
+                    stdout().write(xck::utils::hex(&bytes).as_bytes())?;
+                }
+                Format::Bytes => {
+                    stdout().write(&bytes)?;
+                }
+                Format::Base64 => todo!(),
+            }
+        }
+    }
+    Ok(())
 }
 
 fn main() -> io::Result<()> {
-    let app = app();
-
-    let matches = app.get_matches();
-
-    match matches.subcommand() {
-        Some(("xchacha20-poly1305", arg_matches)) => {
-            let _key: &[u8; SIZE_32] = match arg_matches
-                .get_one::<String>("key")
-                .unwrap_or(&String::default())
-                .as_bytes()
-                .try_into()
-            {
-                Err(err) => {
-                    write!(&mut stderr(), "{:?}", err)?;
-
-                    exit(1)
-                }
-                Ok(key) => key,
-            };
-
-            let _message = arg_matches
-                .get_one::<String>("message")
-                .unwrap_or(&String::default())
-                .as_bytes();
-
-            if arg_matches.get_flag("encrypt") {}
-            if arg_matches.get_flag("decrypt") {
-            } else {
-            }
-        }
-
-        Some(("chacha20-poly1305", arg_matches)) => {
-            let _key: &[u8; SIZE_32] = match arg_matches
-                .get_one::<String>("key")
-                .unwrap_or(&String::default())
-                .as_bytes()
-                .try_into()
-            {
-                Err(err) => {
-                    write!(&mut stderr(), "{:?}", err)?;
-
-                    exit(1)
-                }
-                Ok(key) => key,
-            };
-
-            let _message = arg_matches
-                .get_one::<String>("message")
-                .unwrap_or(&String::default())
-                .as_bytes();
-
-            if arg_matches.get_flag("encrypt") {}
-            if arg_matches.get_flag("decrypt") {
-            } else {
-            }
-        }
-
-        _ => {}
-    }
-
-    Ok(())
+    app()
 }
