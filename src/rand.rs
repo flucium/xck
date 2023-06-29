@@ -47,6 +47,6 @@ pub fn generate() -> [u8; SIZE_32] {
     let mut rng = ChaCha20Rng::from_entropy();
 
     let bytes = rng.gen::<[u8; SIZE_32]>();
-
+    
     bytes
 }
