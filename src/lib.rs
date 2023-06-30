@@ -4,6 +4,7 @@ pub mod rand;
 pub mod size;
 pub mod symmetric;
 pub mod utils;
+pub mod deflate;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
