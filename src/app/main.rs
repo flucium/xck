@@ -1,7 +1,8 @@
 use std::{
-    self,
-    io::{self, stderr, stdout, Write},
-    process::exit, path::Path, fs,
+    self, fs,
+    io::{self, stderr, stdout, Read, Write},
+    path::{Path, PathBuf},
+    process::exit,
 };
 
 use clap::{
@@ -9,7 +10,7 @@ use clap::{
     ValueEnum as ClapValueEnum,
 };
 
-use rand::{Rng, SeedableRng};
+use xck::symmetric;
 
 const NAME: &str = "XCK";
 
@@ -85,7 +86,7 @@ struct ChaCha20Poly1305Args {
     /// aad is...
     #[arg(long = "additionaldata", short = 'a')]
     #[clap(alias = "aad")]
-    aad: String,
+    additionaldata: String,
 
     /// message is...
     #[arg(long = "message", short = 'm')]
@@ -112,7 +113,7 @@ struct XChaCha20Poly1305Args {
     /// aad is...
     #[arg(long = "additionaldata", short = 'a')]
     #[clap(alias = "aad")]
-    aad: String,
+    additionaldata: String,
 
     /// message is...
     #[arg(long = "message", short = 'm')]
@@ -138,7 +139,7 @@ enum Format {
     Base64,
 }
 
-fn app() -> io::Result<()> {
+fn app() {
     let command = Command::parse();
     match command.subcommand {
         Subcommand::Encode { format, message } => match format {
@@ -156,7 +157,52 @@ fn app() -> io::Result<()> {
         },
 
         Subcommand::ChaCha20Poly1305(args) => {
-            println!("{:?}", args.message);
+            let key = match read_arg(args.key) {
+                Err(err) => {
+                    //エラーここ
+                    //ToDo
+                    panic!("")
+                }
+                Ok(bytes) => match TryInto::<[u8; 32]>::try_into(bytes) {
+                    Err(_) => {
+                        //エラーここ
+                        //ToDo
+                        panic!("")
+                    }
+                    Ok(bytes) => bytes,
+                },
+            };
+
+            let additionaldata = match read_arg(args.additionaldata) {
+                Err(err) => {
+                    //エラーここ
+                    //ToDo
+                    panic!("")
+                }
+                Ok(bytes) => bytes,
+            };
+
+            let message = match read_arg(args.message) {
+                Err(err) => {
+                    //エラーここ
+                    //ToDo
+                    panic!("")
+                }
+                Ok(bytes) => bytes,
+            };
+
+            let cipher = match symmetric::chacha20poly1305_encrypt(key, [0u8; 12], &additionaldata, &message) {
+                Err(err) => {
+                    //エラーここ
+                    //ToDo
+                    panic!("")
+                },
+                Ok(cipher) => {
+                    cipher
+                }
+            };
+
+            
         }
 
         Subcommand::XChaCha20Poly1305(args) => todo!(),
@@ -165,36 +211,45 @@ fn app() -> io::Result<()> {
             todo!()
         }
     }
-
-    Ok(())
 }
 
-fn read_file(path:&Path){
-    fs::File::open(path);
+fn read_arg(string: String) -> io::Result<Vec<u8>> {
+    let bytes = match arg_type_of(string) {
+        ArgType::Cli(string) => string.as_bytes().to_owned(),
+        ArgType::File(path) => read_file(&path)?,
+    };
 
-    todo!()
+    Ok(bytes)
 }
 
-fn arg_type_of(string: &str) -> ArgType {
-    match string
-        .split_once(':')
-        .unwrap_or_default()
-        .0
-        .to_lowercase()
-        .as_ref()
-    {
-        "file" => ArgType::File,
-        "cli" => ArgType::Cli,
-        _ => ArgType::Cli,
+fn read_file(path: &Path) -> io::Result<Vec<u8>> {
+    let mut file = fs::File::open(path)?;
+
+    let mut buf = Vec::new();
+
+    file.read_to_end(&mut buf)?;
+
+    Ok(buf)
+}
+
+fn arg_type_of(string: String) -> ArgType {
+    match string.split_once(':') {
+        None => ArgType::Cli(string),
+        Some((a, b)) => match a.as_ref() {
+            "file" => ArgType::File(PathBuf::from(b)),
+            "cli" => ArgType::Cli(b.to_string()),
+            _ => ArgType::Cli(b.to_string()),
+        },
     }
 }
 
 #[derive(Debug)]
 enum ArgType {
-    Cli,
-    File,
+    Cli(String),
+    File(PathBuf),
 }
 
+// main
 fn main() -> io::Result<()> {
-    app()
+    Ok(())
 }
