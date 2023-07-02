@@ -10,20 +10,16 @@ use std::io::Write;
 // Compression::default()
 pub const DEFAULT_DEVEL: u32 = 6;
 
-/// Gz Compress ...
-pub fn gz_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
-    let mut encoder = GzEncoder::new(Vec::new(), Compression::new(level));
+/*
+    Deflate
+    gz_decompress(...)...{...}
+    gz_compress(...)...{...}
+    zlib_decompress(...)...{...}
+    zlib_compress(...)...{...}
+    deflate_decompress(...)...{...}
+    deflate_compress(...)...{...}
+*/
 
-    encoder
-        .write_all(bytes)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    encoder
-        .finish()
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
-}
-
-/// Gz Decompress ...
 pub fn gz_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
     let mut decoder = GzDecoder::new(Vec::new());
 
@@ -36,9 +32,8 @@ pub fn gz_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
 }
 
-/// Zlib Compress ...
-pub fn zlib_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
-    let mut encoder = ZlibEncoder::new(Vec::new(), Compression::new(level));
+pub fn gz_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
+    let mut encoder = GzEncoder::new(Vec::new(), Compression::new(level));
 
     encoder
         .write_all(bytes)
@@ -49,7 +44,6 @@ pub fn zlib_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
 }
 
-/// Zlib Decompress ...
 pub fn zlib_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
     let mut decoder = ZlibDecoder::new(Vec::new());
 
@@ -62,9 +56,8 @@ pub fn zlib_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
 }
 
-/// Deflate Compress ...
-pub fn defalte_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
-    let mut encoder = DeflateEncoder::new(Vec::new(), Compression::new(level));
+pub fn zlib_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
+    let mut encoder = ZlibEncoder::new(Vec::new(), Compression::new(level));
 
     encoder
         .write_all(bytes)
@@ -75,7 +68,6 @@ pub fn defalte_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
 }
 
-/// Deflate Decompress ...
 pub fn deflate_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
     let mut decoder = DeflateDecoder::new(Vec::new());
 
@@ -84,6 +76,18 @@ pub fn deflate_decompress(bytes: &[u8]) -> Result<Vec<u8>> {
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
 
     decoder
+        .finish()
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
+}
+
+pub fn defalte_compress(level: u32, bytes: &[u8]) -> Result<Vec<u8>> {
+    let mut encoder = DeflateEncoder::new(Vec::new(), Compression::new(level));
+
+    encoder
+        .write_all(bytes)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    encoder
         .finish()
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))
 }
