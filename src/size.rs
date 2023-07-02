@@ -1,3 +1,5 @@
+// Byte size
+
 /// 64-byte
 pub const SIZE_64: usize = 64;
 
