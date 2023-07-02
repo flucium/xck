@@ -1,9 +1,91 @@
 use crate::{
-    size::{SIZE_12, SIZE_24, SIZE_32},
+    size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
     Error, ErrorKind, Result,
 };
+
 use aead::{Aead, KeyInit, Payload};
+
+use aes_gcm::{Aes128Gcm, Aes256Gcm};
+
 use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
+
+type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aes_gcm::aead::consts::U12>;
+
+// AesGcm
+
+pub fn aes_128_gcm_encrypt(
+    key: [u8; SIZE_16],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    plain: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes128Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_encrypt(aead, &nonce, aad, plain)
+}
+
+pub fn aes_128_gcm_decrypt(
+    key: [u8; SIZE_16],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    cipher: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes128Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_decrypt(aead, &nonce, aad, cipher)
+}
+
+pub fn aes_192_gcm_encrypt(
+    key: [u8; SIZE_24],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    plain: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes192Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_encrypt(aead, &nonce, aad, plain)
+}
+
+pub fn aes_192_gcm_decrypt(
+    key: [u8; SIZE_24],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    cipher: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes192Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_decrypt(aead, &nonce, aad, cipher)
+}
+
+pub fn aes_256_gcm_encrypt(
+    key: [u8; SIZE_32],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    plain: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes256Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_encrypt(aead, &nonce, aad, plain)
+}
+
+pub fn aes_256_gcm_decrypt(
+    key: [u8; SIZE_32],
+    nonce: [u8; SIZE_12],
+    aad: &[u8],
+    cipher: &[u8],
+) -> Result<Vec<u8>> {
+    let aead = Aes256Gcm::new_from_slice(&key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    aead_encrypt(aead, &nonce, aad, cipher)
+}
+
+// ChaChaPoly1305
 
 pub fn chacha20poly1305_encrypt(
     key: [u8; SIZE_32],
@@ -48,6 +130,7 @@ pub fn xchacha20poly1305_decrypt(
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
     aead_decrypt(aead, &nonce, aad, cipher)
 }
+
 
 fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Result<Vec<u8>> {
     let plain = aead
