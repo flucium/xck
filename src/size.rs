@@ -1,8 +1,8 @@
 /// 12-byte
 pub const SIZE_12: usize = 12;
 
-// 16-byte
-// pub const SIZE_16: usize = 16;
+/// 16-byte
+pub const SIZE_16: usize = 16;
 
 // 20-byte
 // pub const SIZE_20: usize = 20;
