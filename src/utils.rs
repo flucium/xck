@@ -3,7 +3,7 @@ use base64ct::{Base64, Encoding};
 
 const BASE64_BUFFER_SIZE: usize = 1024;
 
-pub fn base64_decode(string: &str) -> Result<Vec<u8>> {
+pub fn from_base64(string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let bytes = Base64::decode(string, &mut buf)
@@ -12,7 +12,7 @@ pub fn base64_decode(string: &str) -> Result<Vec<u8>> {
     Ok(bytes.to_vec())
 }
 
-pub fn base64_encode(bytes: &[u8]) -> Result<String> {
+pub fn to_base64(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let b64_string = Base64::encode(bytes, &mut buf)
