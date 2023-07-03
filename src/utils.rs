@@ -22,25 +22,6 @@ pub fn base64_encode(bytes: &[u8]) -> Result<String> {
     Ok(b64_string)
 }
 
-pub fn to_hex(bytes: &[u8]) -> Vec<u8> {
-    //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
-    const HEX_TABLE: [u8; 16] = [
-        48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
-    ];
-
-    let mut buf = Vec::with_capacity(bytes.len() * 2);
-
-    for byte in bytes {
-        let s_index = (byte >> 4) as usize;
-        buf.push(HEX_TABLE[s_index]);
-
-        let b_index = (byte & 0xF) as usize;
-        buf.push(HEX_TABLE[b_index]);
-    }
-
-    buf
-}
-
 pub fn from_hex(bytes: &[u8]) -> Vec<u8> {
     let len = bytes.len() / 2;
 
@@ -61,3 +42,21 @@ pub fn from_hex(bytes: &[u8]) -> Vec<u8> {
     buf
 }
 
+pub fn to_hex(bytes: &[u8]) -> Vec<u8> {
+    //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+    const HEX_TABLE: [u8; 16] = [
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
+    ];
+
+    let mut buf = Vec::with_capacity(bytes.len() * 2);
+
+    for byte in bytes {
+        let s_index = (byte >> 4) as usize;
+        buf.push(HEX_TABLE[s_index]);
+
+        let b_index = (byte & 0xF) as usize;
+        buf.push(HEX_TABLE[b_index]);
+    }
+
+    buf
+}
