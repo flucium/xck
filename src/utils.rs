@@ -8,10 +8,10 @@ const HEX_TABLE: [u8; 16] = [
     48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
 ];
 
-pub fn from_base64(string: &str) -> Result<Vec<u8>> {
+pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
-    let bytes = Base64::decode(string, &mut buf)
+    let bytes = Base64::decode(b64_string, &mut buf)
         .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?
         .to_vec();
 
