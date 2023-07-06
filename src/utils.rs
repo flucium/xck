@@ -3,11 +3,6 @@ use base64ct::{Base64, Encoding};
 
 const BASE64_BUFFER_SIZE: usize = 1024;
 
-//'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
-const HEX_TABLE: [u8; 16] = [
-    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
-];
-
 pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -51,6 +46,11 @@ pub fn from_hex(hex_string: &str) -> Vec<u8> {
 }
 
 pub fn to_hex(bytes: &[u8]) -> String {
+    //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+    const HEX_TABLE: [u8; 16] = [
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
+    ];
+
     let mut buf = Vec::with_capacity(bytes.len() * 2);
 
     for byte in bytes {
