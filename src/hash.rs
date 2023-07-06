@@ -11,7 +11,8 @@ use blake3::Hasher as Blake3;
 
 pub const BLAKE3_DEFAULT_CONTEXT: &str = "XCK VERSION 0.0.1 BLAKE3 DEFAULT CONTEXT";
 
-const BUFFER_SIZE: usize = 8192;
+// const BUFFER_SIZE: usize = 8192;
+const BUFFER_SIZE: usize = 1024;
 
 /*
     BLAKE3
