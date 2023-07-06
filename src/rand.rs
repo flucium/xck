@@ -6,7 +6,6 @@ use rand_chacha::ChaCha20Rng;
 
 use rand_core::{CryptoRng, Error, RngCore};
 
-
 /// A cryptography rand generator. ChaCha20Rng.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Rand;
@@ -47,6 +46,6 @@ pub fn generate() -> [u8; SIZE_32] {
     let mut rng = ChaCha20Rng::from_entropy();
 
     let bytes = rng.gen::<[u8; SIZE_32]>();
-    
+
     bytes
 }
