@@ -1,53 +1,40 @@
-use ed25519_dalek::{ed25519::signature::SignerMut, Verifier};
-
 use crate::{
-    rand::Rand,
     size::{SIZE_32, SIZE_64},
     Error, ErrorKind, Result,
 };
-
-pub fn ed25519_sign(
-    private_key: [u8; SIZE_32],
-    public_key: [u8; SIZE_32],
-    message: &[u8],
-) -> Result<[u8; SIZE_64]> {
-    let secretkey = ed25519_dalek::SecretKey::from_bytes(&private_key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    let publickey = ed25519_dalek::PublicKey::from_bytes(&public_key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    let signature = ed25519_dalek::Keypair {
-        secret: secretkey,
-        public: publickey,
-    }
-    .sign(message)
-    .to_bytes();
-
-    Ok(signature)
-}
+use ed25519_dalek::{Signer, Verifier};
 
 pub fn ed25519_verify(
-    public_key: [u8; SIZE_32],
-    message: &[u8],
-    signature: [u8; SIZE_64],
+    public_key: &[u8; SIZE_32],
+    signature: &[u8; SIZE_64],
+    msg: &[u8],
 ) -> Result<bool> {
-    let is_ok = ed25519_dalek::PublicKey::from_bytes(&public_key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?
-        .verify(
-            message,
-            &ed25519_dalek::Signature::from_bytes(&signature)
-                .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-        )
-        .is_ok();
+    let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(public_key)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    let signature = ed25519_dalek::Signature::from_bytes(signature);
+
+    let is_ok = verifying_key.verify(msg, &signature).is_ok();
+
     Ok(is_ok)
 }
 
-pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
-    let keypair = ed25519_dalek::Keypair::generate(&mut Rand);
-    (keypair.secret.to_bytes(), keypair.public.to_bytes())
+pub fn ed25519_sign(private_key: &[u8; SIZE_32], msg: &[u8]) -> Result<[u8; SIZE_64]> {
+    let signing_key = ed25519_dalek::SigningKey::from_bytes(private_key);
+
+    let signature = signing_key
+        .try_sign(msg)
+        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+
+    let signature_bytes = signature.to_bytes();
+
+    Ok(signature_bytes)
 }
 
-// pub fn x25519_(){ }
+pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
+    let signing_key = ed25519_dalek::SigningKey::generate(&mut rand::rngs::OsRng);
 
-// pub fn x25519_gen_keypair(){}
+    let verifying_key = signing_key.verifying_key();
+
+    (signing_key.to_bytes(), verifying_key.to_bytes())
+}
