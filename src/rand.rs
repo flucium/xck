@@ -42,10 +42,10 @@ impl RngCore for Rand {
 /// ChaCha20Rng
 //
 /// Generates a 32-byte cryptographic pseudo random number.
-pub fn generate() -> [u8; SIZE_U32] {
+pub fn generate() -> [u8; SIZE_32] {
     let mut rng = ChaCha20Rng::from_entropy();
 
-    let bytes = rng.gen::<[u8; SIZE_U32]>();
+    let bytes = rng.gen::<[u8; SIZE_32]>();
 
     bytes
 }

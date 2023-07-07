@@ -1,12 +1,16 @@
+pub mod asymmetric;
+pub mod hash;
 pub mod rand;
 pub mod size;
 pub mod symmetric;
-pub mod hash;
+pub mod utils;
 pub mod deflate;
 
-pub type Result<T> = std::result::Result<T, Error>;
+/// Result ...
+pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug, Clone)]
+/// Error ...
+#[derive(Debug)]
 pub struct Error {
     kind: ErrorKind,
     message: String,
@@ -20,16 +24,17 @@ impl Error {
         }
     }
 
-    pub fn message(&self) -> &str {
-        &self.message
-    }
-
     pub fn kind(&self) -> &ErrorKind {
         &self.kind
     }
+
+    pub fn message(&self) -> &str {
+        &self.message
+    }
 }
 
-#[derive(Debug, Clone)]
+/// ErrorKind ...
+#[derive(Debug)]
 pub enum ErrorKind {
     Todo,
 }
