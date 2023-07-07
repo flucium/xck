@@ -1,16 +1,16 @@
 use std::{
-    self, fs,
-    io::{self, stderr, stdout, Read, Write},
+    self,
+    fs,
+    hash,
+    // io::{self, stderr, stdout, Read, Write},
+    io::{self, Read},
     path::{Path, PathBuf},
-    process::exit,
 };
 
 use clap::{
     Args as ClapArgs, Parser as ClapParser, Subcommand as ClapSubcommand,
-    ValueEnum as ClapValueEnum,
+    // ValueEnum as ClapValueEnum,
 };
-
-use xck::symmetric;
 
 const NAME: &str = "XCK";
 
@@ -30,12 +30,18 @@ struct Command {
 
 #[derive(ClapSubcommand)]
 enum Subcommand {
-    #[command(name = "encode")]
-    Encode {
-        /// format is...
-        #[arg(long = "format", short = 'f', default_value = "bytes")]
-        #[clap(alias = "fmt")]
-        format: Format,
+    /// hex is...
+    #[command(name = "hex")]
+    Hex {
+        /// encode is...
+        #[arg(long = "encode", short = 'e')]
+        #[clap(alias = "enc")]
+        encode: bool,
+
+        /// decode is...
+        #[arg(long = "decode", short = 'd')]
+        #[clap(alias = "dec")]
+        decode: bool,
 
         /// message is...
         #[arg(long = "message", short = 'm')]
@@ -43,12 +49,56 @@ enum Subcommand {
         message: String,
     },
 
-    #[command(name = "decode")]
-    Decode {
-        /// format is...
-        #[arg(long = "format", short = 'f', default_value = "bytes")]
-        #[clap(alias = "fmt")]
-        format: Format,
+    // base16 is...
+    // #[command(name = "base16")]
+    // Base16 {
+    //     /// encode is...
+    //     #[arg(long = "encode", short = 'e')]
+    //     #[clap(alias = "enc")]
+    //     encode: bool,
+
+    //     /// decode is...
+    //     #[arg(long = "decode", short = 'd')]
+    //     #[clap(alias = "dec")]
+    //     decode: bool,
+
+    //     /// message is...
+    //     #[arg(long = "message", short = 'm')]
+    //     #[clap(alias = "msg")]
+    //     message: String,
+    // },
+
+    // base32 is...
+    // #[command(name = "base32")]
+    // Base32 {
+    //     /// encode is...
+    //     #[arg(long = "encode", short = 'e')]
+    //     #[clap(alias = "enc")]
+    //     encode: bool,
+
+    //     /// decode is...
+    //     #[arg(long = "decode", short = 'd')]
+    //     #[clap(alias = "dec")]
+    //     decode: bool,
+
+    //     /// message is...
+    //     #[arg(long = "message", short = 'm')]
+    //     #[clap(alias = "msg")]
+    //     message: String,
+    // },
+
+    /// base64 is...
+    #[command(name = "base64")]
+    Base64 {
+        /// encode is...
+        #[arg(long = "encode", short = 'e')]
+        #[clap(alias = "enc")]
+        encode: bool,
+
+        /// decode is...
+        #[arg(long = "decode", short = 'd')]
+        #[clap(alias = "dec")]
+        decode: bool,
 
         /// message is...
         #[arg(long = "message", short = 'm')]
@@ -56,15 +106,122 @@ enum Subcommand {
         message: String,
     },
 
-    #[command(name = "chacha20poly1305")]
-    ChaCha20Poly1305(ChaCha20Poly1305Args),
+    /// deflate is...
+    #[command(name = "deflate")]
+    Deflate {
+        /// encode is...
+        #[arg(long = "encode", short = 'e')]
+        #[clap(alias = "enc")]
+        encode: bool,
 
-    #[command(name = "xchacha20poly1305")]
-    XChaCha20Poly1305(XChaCha20Poly1305Args),
+        /// decode is...
+        #[arg(long = "decode", short = 'd')]
+        #[clap(alias = "dec")]
+        decode: bool,
 
+        /// level is...
+        #[arg(long = "level", short = 'l', default_value = "6")]
+        #[clap(alias = "lv")]
+        level: usize,
+
+        /// message is...
+        #[arg(long = "message", short = 'm')]
+        #[clap(alias = "msg")]
+        message: String,
+    },
+
+    /// zlib is...  
+    #[command(name = "zlib")]
+    Zlib {
+        /// encode is...
+        #[arg(long = "encode", short = 'e')]
+        #[clap(alias = "enc")]
+        encode: bool,
+
+        /// decode is...
+        #[arg(long = "decode", short = 'd')]
+        #[clap(alias = "dec")]
+        decode: bool,
+
+        /// level is...
+        #[arg(long = "level", short = 'l', default_value = "6")]
+        #[clap(alias = "lv")]
+        level: usize,
+
+        /// message is...
+        #[arg(long = "message", short = 'm')]
+        #[clap(alias = "msg")]
+        message: String,
+    },
+
+    /// gz is...
+    #[command(name = "gz")]
+    Gz {
+        /// encode is...
+        #[arg(long = "encode", short = 'e')]
+        #[clap(alias = "enc")]
+        encode: bool,
+
+        /// decode is...
+        #[arg(long = "decode", short = 'd')]
+        #[clap(alias = "dec")]
+        decode: bool,
+
+        /// level is...
+        #[arg(long = "level", short = 'l', default_value = "6")]
+        #[clap(alias = "lv")]
+        level: usize,
+
+        /// message is...
+        #[arg(long = "message", short = 'm')]
+        #[clap(alias = "msg")]
+        message: String,
+    },
+
+    /// random is...
     #[command(name = "random")]
     #[clap(alias = "rand")]
     Random(RandomArgs),
+
+    /// chacha20poly1305 is...
+    #[command(name = "chacha20poly1305")]
+    ChaCha20Poly1305(ChaCha20Poly1305Args),
+
+    /// xchacha20poly1305 is...
+    #[command(name = "xchacha20poly1305")]
+    XChaCha20Poly1305(XChaCha20Poly1305Args),
+    //
+    //
+    //
+    // ToDo
+    // #[command(name = "aes-128-gcm")]
+    // Aes128Gcm
+
+    // #[command(name = "aes-192-gcm")]
+    // Aes192Gcm
+
+    // #[command(name = "aes-256-gcm")]
+    // Aes256Gcm
+
+    // #[command(name = "argon2")]
+    // Argon2 (Variant i/d/id)
+
+    // #[command(name = "pbkdf2")]
+    // Pbkdf2
+
+    // #[command(name = "blake3")]
+    // #[clap(alias = "b3")]
+    // Blake3 (Variant regular/kdf/xof/mac)
+
+    // #[command(name = "sha256")]
+    // #[clap(alias = "sha2")]
+    // Sha256
+
+    // #[command(name = "sha512")]
+    // Sha512
+
+    // #[command(name = "sha512-256")]
+    // Sha512_256
 }
 
 #[derive(ClapArgs)]
@@ -126,90 +283,52 @@ struct RandomArgs {
     // #[arg(long = "length", short = 'l', default_value = "32")]
     // #[clap(alias = "len")]
     // length: usize,
-    #[arg(long = "format", short = 'f', default_value = "bytes")]
-    #[clap(alias = "fmt")]
-    format: Format,
-}
-
-#[derive(Clone, ClapValueEnum)]
-enum Format {
-    String,
-    Bytes,
-    Hex,
-    Base64,
 }
 
 fn app() {
     let command = Command::parse();
     match command.subcommand {
-        Subcommand::Encode { format, message } => match format {
-            Format::String => todo!(),
-            Format::Bytes => todo!(),
-            Format::Hex => todo!(),
-            Format::Base64 => todo!(),
-        },
-
-        Subcommand::Decode { format, message } => match format {
-            Format::String => todo!(),
-            Format::Bytes => todo!(),
-            Format::Hex => todo!(),
-            Format::Base64 => todo!(),
-        },
-
-        Subcommand::ChaCha20Poly1305(args) => {
-            let key = match read_arg(args.key) {
-                Err(err) => {
-                    //エラーここ
-                    //ToDo
-                    panic!("")
-                }
-                Ok(bytes) => match TryInto::<[u8; 32]>::try_into(bytes) {
-                    Err(_) => {
-                        //エラーここ
-                        //ToDo
-                        panic!("")
-                    }
-                    Ok(bytes) => bytes,
-                },
-            };
-
-            let additionaldata = match read_arg(args.additionaldata) {
-                Err(err) => {
-                    //エラーここ
-                    //ToDo
-                    panic!("")
-                }
-                Ok(bytes) => bytes,
-            };
-
-            let message = match read_arg(args.message) {
-                Err(err) => {
-                    //エラーここ
-                    //ToDo
-                    panic!("")
-                }
-                Ok(bytes) => bytes,
-            };
-
-            let cipher = match symmetric::chacha20poly1305_encrypt(key, [0u8; 12], &additionaldata, &message) {
-                Err(err) => {
-                    //エラーここ
-                    //ToDo
-                    panic!("")
-                },
-                Ok(cipher) => {
-                    cipher
-                }
-            };
-
-            
-        }
-
+        Subcommand::Hex {
+            encode,
+            decode,
+            message,
+        } => todo!(),
+        // Subcommand::Base16 {
+        //     encode,
+        //     decode,
+        //     message,
+        // } => todo!(),
+        // Subcommand::Base32 {
+        //     encode,
+        //     decode,
+        //     message,
+        // } => todo!(),
+        Subcommand::Base64 {
+            encode,
+            decode,
+            message,
+        } => todo!(),
+        Subcommand::Deflate {
+            encode,
+            decode,
+            level,
+            message,
+        } => todo!(),
+        Subcommand::Zlib {
+            encode,
+            decode,
+            level,
+            message,
+        } => todo!(),
+        Subcommand::Gz {
+            encode,
+            decode,
+            level,
+            message,
+        } => todo!(),
+        Subcommand::Random(args) => todo!(),
+        Subcommand::ChaCha20Poly1305(args) => todo!(),
         Subcommand::XChaCha20Poly1305(args) => todo!(),
-
-        Subcommand::Random(args) => {
-            todo!()
-        }
     }
 }
 
@@ -249,7 +368,6 @@ enum ArgType {
     File(PathBuf),
 }
 
-// main
-fn main() -> io::Result<()> {
-    Ok(())
+fn main() {
+    app()
 }
