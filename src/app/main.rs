@@ -1,14 +1,16 @@
 use std::{
     self,
     fs,
-    hash,
+
     // io::{self, stderr, stdout, Read, Write},
     io::{self, Read},
     path::{Path, PathBuf},
 };
 
 use clap::{
-    Args as ClapArgs, Parser as ClapParser, Subcommand as ClapSubcommand,
+    Args as ClapArgs,
+    Parser as ClapParser,
+    Subcommand as ClapSubcommand,
     // ValueEnum as ClapValueEnum,
 };
 
@@ -86,7 +88,6 @@ enum Subcommand {
     //     #[clap(alias = "msg")]
     //     message: String,
     // },
-
     /// base64 is...
     #[command(name = "base64")]
     Base64 {
