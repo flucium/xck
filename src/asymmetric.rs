@@ -2,7 +2,16 @@ use crate::{
     size::{SIZE_32, SIZE_64},
     Error, ErrorKind, Result,
 };
+
 use ed25519_dalek::{Signer, Verifier};
+
+pub fn x25519_diffiehellman() {
+    todo!()
+}
+
+pub fn x25519_gen_keypair() {
+    todo!()
+}
 
 pub fn ed25519_verify(
     public_key: &[u8; SIZE_32],
