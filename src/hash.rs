@@ -25,11 +25,11 @@ const BUFFER_SIZE: usize = 1024;
     blake3(...)...{...}
 */
 
-pub fn blake3_mac_from_io<R>(key: [u8; SIZE_32], r: &mut R) -> Result<[u8; SIZE_32]>
+pub fn blake3_mac_from_io<R>(key: &[u8; SIZE_32], r: &mut R) -> Result<[u8; SIZE_32]>
 where
     R: io::Read,
 {
-    let mut hasher = Blake3::new_keyed(&key);
+    let mut hasher = Blake3::new_keyed(key);
 
     let mut buf = [0u8; BUFFER_SIZE];
 
@@ -84,8 +84,8 @@ where
     Ok(hasher.finalize().into())
 }
 
-pub fn blake3_mac(key: [u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
-    blake3::keyed_hash(&key, message).into()
+pub fn blake3_mac(key: &[u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
+    blake3::keyed_hash(key, message).into()
 }
 
 pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
