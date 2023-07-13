@@ -1,6 +1,4 @@
 use crate::{
-    hash::{blake3_kdf, BLAKE3_DEFAULT_CONTEXT},
-    rand::generate,
     size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
     Error, ErrorKind, Result,
 };
@@ -12,30 +10,6 @@ use aes_gcm::{Aes128Gcm, Aes256Gcm};
 use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 
 type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aes_gcm::aead::consts::U12>;
-
-pub fn gen_nonce_24() -> [u8; SIZE_24] {
-    gen().get(0..SIZE_24).unwrap().try_into().unwrap()
-}
-
-pub fn gen_nonce_12() -> [u8; SIZE_12] {
-    gen().get(0..SIZE_12).unwrap().try_into().unwrap()
-}
-
-pub fn gen_key_32() -> [u8; SIZE_32] {
-    gen().get(0..SIZE_32).unwrap().try_into().unwrap()
-}
-
-pub fn gen_key_24() -> [u8; SIZE_24] {
-    gen().get(0..SIZE_24).unwrap().try_into().unwrap()
-}
-
-pub fn gen_key_16() -> [u8; SIZE_16] {
-    gen().get(0..SIZE_16).unwrap().try_into().unwrap()
-}
-
-fn gen() -> [u8; SIZE_32] {
-    blake3_kdf(BLAKE3_DEFAULT_CONTEXT, &generate())
-}
 
 pub fn aes_256_gcm_decrypt(
     key: &[u8; SIZE_32],
