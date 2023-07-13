@@ -42,6 +42,9 @@ sha2 = "0.10.6"
 #dalek-cryptography/ed25519-dalek/
 ed25519-dalek = {version="2.0.0-rc.3" , features=["rand_core"]}
 
+#dalek-cryptography/x25519-dalek/
+x25519-dalek = {version="2.0.0-rc.3" , features=["static_secrets"]}
+
 #RustCrypto/rsa/
 #rsa = "0.9.2"
 

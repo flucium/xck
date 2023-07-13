@@ -5,12 +5,21 @@ use crate::{
 
 use ed25519_dalek::{Signer, Verifier};
 
-pub fn x25519_diffiehellman() {
-    todo!()
+pub fn x25519_diffiehellman(
+    private_key: &[u8; SIZE_32],
+    their_public: &[u8; SIZE_32],
+) -> [u8; SIZE_32] {
+    x25519_dalek::StaticSecret::from(*private_key)
+        .diffie_hellman(&x25519_dalek::PublicKey::from(*their_public))
+        .to_bytes()
 }
 
-pub fn x25519_gen_keypair() {
-    todo!()
+pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
+    let static_secret = x25519_dalek::StaticSecret::random_from_rng(&mut rand::rngs::OsRng);
+
+    let public_key = x25519_dalek::PublicKey::from(&static_secret);
+
+    (static_secret.to_bytes(), public_key.to_bytes())
 }
 
 pub fn ed25519_verify(
