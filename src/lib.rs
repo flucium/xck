@@ -2,6 +2,7 @@ pub mod rand;
 mod size;
 pub mod symmetric;
 pub mod asymmetric;
+pub mod hash;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
@@ -35,6 +36,7 @@ impl Error {
 pub enum ErrorKind {
     Uncategorized,
     SignatureError,
+    IOError,
     EncryptFailed,
     DecryptFailed,
 }
