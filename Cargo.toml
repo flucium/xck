@@ -7,9 +7,9 @@ edition = "2021"
 name = "xck"
 path = "src/lib.rs"
 
-[[bin]]
-name = "xck"
-path = "src/app/main.rs"
+#[[bin]]
+#name = "xck"
+#path = "src/app/main.rs"
 
 [dependencies]
 
