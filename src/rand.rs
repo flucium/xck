@@ -2,16 +2,9 @@ use crate::size::*;
 
 use rand::{Rng, SeedableRng};
 
-#[cfg(not(feature = "lower"))]
 use rand_chacha::{
     rand_core::{CryptoRng, Error, RngCore},
-    ChaCha20Rng as ChaChaRng,
-};
-
-#[cfg(feature = "lower")]
-use rand_chacha::{
-    rand_core::{CryptoRng, Error, RngCore},
-    ChaCha8Rng as ChaChaRng,
+    ChaCha20Rng,
 };
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -51,17 +44,17 @@ pub fn generate() -> [u8; SIZE_32] {
 }
 
 pub fn gen_32() -> [u8; SIZE_32] {
-    ChaChaRng::from_entropy().gen::<[u8; SIZE_32]>()
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_32]>()
 }
 
 pub fn gen_24() -> [u8; SIZE_24] {
-    ChaChaRng::from_entropy().gen::<[u8; SIZE_24]>()
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_24]>()
 }
 
 pub fn gen_16() -> [u8; SIZE_16] {
-    ChaChaRng::from_entropy().gen::<[u8; SIZE_16]>()
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_16]>()
 }
 
 pub fn gen_12() -> [u8; SIZE_12] {
-    ChaChaRng::from_entropy().gen::<[u8; SIZE_12]>()
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
