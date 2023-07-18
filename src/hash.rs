@@ -6,8 +6,9 @@ use sha2::{digest::Digest, Sha256, Sha512, Sha512_256};
 
 use crate::{
     size::{SIZE_32, SIZE_64},
-    Error, ErrorKind, Result,
+    Error, Result,
 };
+
 
 /// BLAKE3 KDF default context.
 pub const BLAKE3_DEFAULT_CONTEXT: &str = "XCK VERSION 0.0.1 BLAKE3 DEFAULT CONTEXT";
@@ -37,7 +38,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new(err.to_string()))?
         > 0
     {
         hasher.update(&buf);
@@ -57,7 +58,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new( err.to_string()))?
         > 0
     {
         hasher.update(&buf);
@@ -79,7 +80,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new(err.to_string()))?
         > 0
     {
         hasher.update(&buf);
@@ -129,7 +130,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new(err.to_string()))?
         > 0
     {
         hasher.update(buf);
@@ -149,7 +150,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new(err.to_string()))?
         > 0
     {
         hasher.update(buf);
@@ -169,7 +170,7 @@ where
 
     while r
         .read(&mut buf)
-        .map_err(|err| Error::new(ErrorKind::IOError, err.to_string()))?
+        .map_err(|err| Error::new( err.to_string()))?
         > 0
     {
         hasher.update(buf);
