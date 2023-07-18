@@ -137,7 +137,7 @@ fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Res
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::DecryptFailed, err.to_string()))?;
+        .map_err(|err| Error::new(ErrorKind::DecryptionFailed, err.to_string()))?;
 
     Ok(plain)
 }
@@ -151,7 +151,7 @@ fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Resu
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::EncryptFailed, err.to_string()))?;
+        .map_err(|err| Error::new(ErrorKind::EncryptionFailed, err.to_string()))?;
 
     Ok(cipher)
 }

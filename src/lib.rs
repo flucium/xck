@@ -40,6 +40,6 @@ pub enum ErrorKind {
     IOError,
     EncodingFailed,
     DecodingFailed,
-    EncryptFailed,
-    DecryptFailed,
+    EncryptionFailed,
+    DecryptionFailed,
 }
