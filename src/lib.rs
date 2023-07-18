@@ -1,6 +1,7 @@
 pub mod rand;
 mod size;
 pub mod symmetric;
+pub mod asymmetric;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
@@ -33,7 +34,7 @@ impl Error {
 #[derive(Debug)]
 pub enum ErrorKind {
     Uncategorized,
-    // BadKey,
+    SignatureError,
     EncryptFailed,
     DecryptFailed,
 }
