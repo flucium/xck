@@ -19,7 +19,7 @@ pub fn aes_256_gcm_decrypt(
 ) -> Result<Vec<u8>> {
     aead_decrypt(
         Aes256Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         cipher,
@@ -34,7 +34,7 @@ pub fn aes_256_gcm_encrypt(
 ) -> Result<Vec<u8>> {
     aead_encrypt(
         Aes256Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         plain,
@@ -49,7 +49,7 @@ pub fn aes_192_gcm_decrypt(
 ) -> Result<Vec<u8>> {
     aead_decrypt(
         Aes192Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         cipher,
@@ -64,7 +64,7 @@ pub fn aes_192_gcm_encrypt(
 ) -> Result<Vec<u8>> {
     aead_encrypt(
         Aes192Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         plain,
@@ -79,7 +79,7 @@ pub fn aes_128_gcm_decrypt(
 ) -> Result<Vec<u8>> {
     aead_decrypt(
         Aes128Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         cipher,
@@ -94,7 +94,7 @@ pub fn aes_128_gcm_encrypt(
 ) -> Result<Vec<u8>> {
     aead_encrypt(
         Aes128Gcm::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         plain,
@@ -116,7 +116,7 @@ pub fn xchacha20_poly1305_decrypt(
 ) -> Result<Vec<u8>> {
     aead_decrypt(
         XChaCha20Poly1305::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         cipher,
@@ -131,7 +131,7 @@ pub fn xchacha20_poly1305_encrypt(
 ) -> Result<Vec<u8>> {
     aead_encrypt(
         XChaCha20Poly1305::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         plain,
@@ -146,7 +146,7 @@ pub fn chacha20_poly1305_decrypt(
 ) -> Result<Vec<u8>> {
     aead_decrypt(
         ChaCha20Poly1305::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         cipher,
@@ -161,7 +161,7 @@ pub fn chacha20_poly1305_encrypt(
 ) -> Result<Vec<u8>> {
     aead_encrypt(
         ChaCha20Poly1305::new_from_slice(&key)
-            .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
+            .map_err(|err| Error::new(ErrorKind::BadKey, err.to_string()))?,
         nonce,
         aad,
         plain,
@@ -177,7 +177,7 @@ fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Res
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+        .map_err(|err| Error::new(ErrorKind::DecryptFailed, err.to_string()))?;
 
     Ok(plain)
 }
@@ -191,7 +191,7 @@ fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Resu
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+        .map_err(|err| Error::new(ErrorKind::EncryptFailed, err.to_string()))?;
 
     Ok(cipher)
 }
