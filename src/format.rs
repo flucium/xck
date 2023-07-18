@@ -1,4 +1,4 @@
-use crate::{Error, ErrorKind, Result};
+use crate::{Error, Result};
 use base64ct::{Base64, Encoding};
 
 const BASE64_BUFFER_SIZE: usize = 1024;
@@ -8,7 +8,7 @@ pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let bytes = Base64::decode(b64_string, &mut buf)
-        .map_err(|err| Error::new(ErrorKind::DecodingFailed, err.to_string()))?
+        .map_err(|err| Error::new( err.to_string()))?
         .to_vec();
 
     Ok(bytes)
@@ -19,7 +19,7 @@ pub fn to_base64(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let b64_string: String = Base64::encode(bytes, &mut buf)
-        .map_err(|err| Error::new(ErrorKind::EncodingFailed, err.to_string()))?
+        .map_err(|err| Error::new( err.to_string()))?
         .to_string();
     
     Ok(b64_string)
