@@ -1,10 +1,9 @@
 pub mod asymmetric;
+pub mod format;
 pub mod hash;
 pub mod rand;
-pub mod size;
+mod size;
 pub mod symmetric;
-pub mod utils;
-pub mod deflate;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
@@ -36,5 +35,12 @@ impl Error {
 /// ErrorKind ...
 #[derive(Debug)]
 pub enum ErrorKind {
-    Todo,
+    Uncategorized,
+    IOError,
+    EncodingFailed,
+    DecodingFailed,
+    SigningFailed,
+    VerifyingFailed,
+    EncryptionFailed,
+    DecryptionFailed,
 }

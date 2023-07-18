@@ -3,26 +3,29 @@ use base64ct::{Base64, Encoding};
 
 const BASE64_BUFFER_SIZE: usize = 1024;
 
+/// Base64 Decode.
 pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let bytes = Base64::decode(b64_string, &mut buf)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?
+        .map_err(|err| Error::new(ErrorKind::DecodingFailed, err.to_string()))?
         .to_vec();
 
     Ok(bytes)
 }
 
+/// Base64 Encode.
 pub fn to_base64(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
     let b64_string: String = Base64::encode(bytes, &mut buf)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?
+        .map_err(|err| Error::new(ErrorKind::EncodingFailed, err.to_string()))?
         .to_string();
-
+    
     Ok(b64_string)
 }
 
+/// Hex Encode.
 pub fn from_hex(hex_string: &str) -> Vec<u8> {
     let bytes = hex_string.as_bytes();
 
@@ -45,6 +48,7 @@ pub fn from_hex(hex_string: &str) -> Vec<u8> {
     buf
 }
 
+/// Hex Decode.
 pub fn to_hex(bytes: &[u8]) -> String {
     //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     const HEX_TABLE: [u8; 16] = [
