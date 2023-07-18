@@ -1,35 +1,26 @@
 
 
 ## Symmetric
-**AES**
-
 AES-128-GCM
 
 AES-192-GCM
 
 AES-256-GCM
 
-**ChaCha**
-
 ChaCha20-Poly1305
 
 XChaCha20-Poly1305
 
 ## Asymmetric
-
 Ed25519
 
 
 ## Hash
-**SHA2**
-
 SHA256
 
 SHA512
 
 SHA512/256
-
-**BLAKE3**
 
 BLAKE3 Regular hash
 
