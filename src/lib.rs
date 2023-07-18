@@ -1,9 +1,9 @@
+pub mod asymmetric;
+pub mod format;
+pub mod hash;
 pub mod rand;
 mod size;
 pub mod symmetric;
-pub mod asymmetric;
-pub mod hash;
-pub mod format;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
@@ -36,10 +36,11 @@ impl Error {
 #[derive(Debug)]
 pub enum ErrorKind {
     Uncategorized,
-    SignatureError,
     IOError,
     EncodingFailed,
     DecodingFailed,
+    SigningFailed,
+    VerifyingFailed,
     EncryptionFailed,
     DecryptionFailed,
 }

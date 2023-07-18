@@ -22,15 +22,15 @@ pub fn ed25519_verify(
     signature: &[u8; SIZE_64],
 ) -> Result<()> {
     ed25519_dalek::VerifyingKey::from_bytes(public_key)
-        .map_err(|err| Error::new(ErrorKind::SignatureError, err.to_string()))?
+        .map_err(|err| Error::new(ErrorKind::VerifyingFailed, err.to_string()))?
         .verify(message, &ed25519_dalek::Signature::from_bytes(signature))
-        .map_err(|err| Error::new(ErrorKind::SignatureError, err.to_string()))
+        .map_err(|err| Error::new(ErrorKind::VerifyingFailed, err.to_string()))
 }
 
 pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; SIZE_64]> {
     let signature = ed25519_dalek::SigningKey::from_bytes(private_key)
         .try_sign(message)
-        .map_err(|err| Error::new(ErrorKind::SignatureError, err.to_string()))?;
+        .map_err(|err| Error::new(ErrorKind::SigningFailed, err.to_string()))?;
 
     Ok(signature.to_bytes())
 }
