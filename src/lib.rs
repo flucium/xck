@@ -32,5 +32,8 @@ impl Error {
 /// ErrorKind ...
 #[derive(Debug)]
 pub enum ErrorKind {
-    Todo,
+    Uncategorized,
+    BadKey,
+    EncryptFailed,
+    DecryptFailed,
 }
