@@ -1,10 +1,6 @@
-pub mod asymmetric;
-pub mod deflate;
-pub mod hash;
 pub mod rand;
 mod size;
 pub mod symmetric;
-pub mod utils;
 
 /// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
