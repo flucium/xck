@@ -5,10 +5,8 @@ pub mod rand;
 mod size;
 pub mod symmetric;
 
-/// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
 
-/// Error ...
 #[derive(Debug)]
 pub struct Error {
     message: String,

@@ -4,6 +4,8 @@ use base64ct::{Base64, Encoding};
 const BASE64_BUFFER_SIZE: usize = 1024;
 
 /// Base64 Decode.
+/// 
+/// constant time.
 pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -15,6 +17,8 @@ pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
 }
 
 /// Base64 Encode.
+/// 
+/// constant time.
 pub fn to_base64(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 

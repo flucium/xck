@@ -6,6 +6,7 @@ use crate::{
     Error, Result,
 };
 
+/// Ed25519 generate keypair.
 pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     let signing_key = ed25519_dalek::SigningKey::generate(&mut Rand);
 
@@ -16,6 +17,7 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
+/// Ed25519 Verifier.
 pub fn ed25519_verify(
     public_key: &[u8; SIZE_32],
     message: &[u8],
@@ -27,6 +29,7 @@ pub fn ed25519_verify(
         .map_err(|err| Error::new( err.to_string()))
 }
 
+/// Ed25519 Signer.
 pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; SIZE_64]> {
     let signature = ed25519_dalek::SigningKey::from_bytes(private_key)
         .try_sign(message)

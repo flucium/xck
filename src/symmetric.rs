@@ -11,6 +11,7 @@ use aes_gcm::{Aes128Gcm, Aes256Gcm};
 
 type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aead::consts::U12>;
 
+/// AES 256 GCM Decrypt
 pub fn aes_256_gcm_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -20,6 +21,7 @@ pub fn aes_256_gcm_decrypt(
     aead_decrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 256 Encrypt
 pub fn aes_256_gcm_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -29,6 +31,7 @@ pub fn aes_256_gcm_encrypt(
     aead_encrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
+/// AES 192 Decrypt
 pub fn aes_192_gcm_decrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -38,6 +41,7 @@ pub fn aes_192_gcm_decrypt(
     aead_decrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 192 Encrypt
 pub fn aes_192_gcm_encrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -47,6 +51,7 @@ pub fn aes_192_gcm_encrypt(
     aead_encrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
+/// AES 128 Decrypt
 pub fn aes_128_gcm_decrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -56,6 +61,7 @@ pub fn aes_128_gcm_decrypt(
     aead_decrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 128 Encrypt
 pub fn aes_128_gcm_encrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -65,13 +71,7 @@ pub fn aes_128_gcm_encrypt(
     aead_encrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
-/*
-    xchacha20_poly1305_decrypt
-    xchacha20_poly1305_encrypt
-    chacha20_poly1305_decrypt
-    chacha20_poly1305_encrypt
-*/
-
+/// XChaCha20 Poly1305 Decrypt
 pub fn xchacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -86,6 +86,7 @@ pub fn xchacha20_poly1305_decrypt(
     )
 }
 
+/// XChaCha20 Poly1305 Encrypt
 pub fn xchacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -100,6 +101,7 @@ pub fn xchacha20_poly1305_encrypt(
     )
 }
 
+/// ChaCha20 Poly1305 Decrypt
 pub fn chacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -114,6 +116,7 @@ pub fn chacha20_poly1305_decrypt(
     )
 }
 
+/// ChaCha20 Poly1305 Encrypt
 pub fn chacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
