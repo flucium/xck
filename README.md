@@ -1,4 +1,5 @@
 
+
 ## Symmetric
 **AES**
 
@@ -19,7 +20,7 @@ XChaCha20-Poly1305
 Ed25519
 
 
-## Hashes
+## Hash
 **SHA2**
 
 SHA256
@@ -44,5 +45,9 @@ Base64 (constant time)
 Hex
 
 ## Random (CSPRNG)
+
+...
+
+## Compress
 
 ...
