@@ -7,6 +7,9 @@ use rand_chacha::{
     ChaCha20Rng,
 };
 
+/// Rand implements RngCore and CryptoRng.
+/// 
+/// Internally, ChaCha20Rng.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Rand;
 
@@ -39,22 +42,38 @@ impl RngCore for Rand {
     }
 }
 
+/// ChaCha20Rng
+/// 
+/// Generates a 32-byte random bytes.
 pub fn generate() -> [u8; SIZE_32] {
     gen_32()
 }
 
+/// ChaCha20Rng
+/// 
+/// Generates a 32-byte random bytes.
 pub fn gen_32() -> [u8; SIZE_32] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_32]>()
 }
 
+/// ChaCha20Rng
+/// 
+/// Generates a 24-byte random bytes.
 pub fn gen_24() -> [u8; SIZE_24] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_24]>()
 }
 
+/// ChaCha20Rng
+/// 
+/// Generates a 16-byte random bytes.
 pub fn gen_16() -> [u8; SIZE_16] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_16]>()
 }
 
+
+/// ChaCha20Rng
+/// 
+/// Generates a 12-byte random bytes.
 pub fn gen_12() -> [u8; SIZE_12] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
