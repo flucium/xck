@@ -33,7 +33,7 @@ impl Error {
 #[derive(Debug)]
 pub enum ErrorKind {
     Uncategorized,
-    BadKey,
+    // BadKey,
     EncryptFailed,
     DecryptFailed,
 }
