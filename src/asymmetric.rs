@@ -10,7 +10,7 @@ use crate::{
 /// 
 /// # Example
 /// ```
-/// let (private_key,public_key) = ed25519_gen_keypair();
+/// let (private_key,public_key) = xck::asymmetric::ed25519_gen_keypair();
 /// 
 /// println!("{:?}\n{:?}",private_key,public_key);
 /// ```
