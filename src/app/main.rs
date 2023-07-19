@@ -65,10 +65,14 @@ struct HexArgs {
     #[clap(alias = "dec")]
     decode: bool,
 
-    /// message is...
-    #[arg(long = "message", short = 'm')]
-    #[clap(alias = "msg")]
-    message: String,
+    /// input is...
+    #[arg(long = "input", short = 'i')]
+    #[clap(alias = "in")]
+    input: String,
+    // output is...
+    // #[arg(long = "output", short = 'o')]
+    // #[clap(alias = "out")]
+    // output: Option<String>,
 }
 
 #[derive(ClapArgs)]
@@ -83,10 +87,14 @@ struct Base64Args {
     #[clap(alias = "dec")]
     decode: bool,
 
-    /// message is...
-    #[arg(long = "message", short = 'm')]
-    #[clap(alias = "msg")]
-    message: String,
+    /// input is...
+    #[arg(long = "input", short = 'i')]
+    #[clap(alias = "in")]
+    input: String,
+    // output is...
+    // #[arg(long = "output", short = 'o')]
+    // #[clap(alias = "out")]
+    // output: Option<String>,
 }
 
 #[derive(ClapArgs)]
@@ -153,7 +161,7 @@ struct RandomArgs {
 fn app() {
     let command = Command::parse();
     match command.subcommand {
-        Subcommand::Hex(args) => todo!(),
+        Subcommand::Hex(args) => {}
         Subcommand::Base64(args) => todo!(),
         Subcommand::Random(args) => todo!(),
         Subcommand::ChaCha20Poly1305(args) => todo!(),
