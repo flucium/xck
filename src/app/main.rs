@@ -209,5 +209,5 @@ fn arg_type_of(string: String) -> ArgType {
 }
 
 fn main() {
-    app()
+
 }
