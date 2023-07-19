@@ -6,6 +6,18 @@ const BASE64_BUFFER_SIZE: usize = 1024;
 /// Base64 Decode.
 /// 
 /// constant time.
+/// 
+/// # Example
+/// ```
+/// let b64_string = "aGVsbG8";
+/// 
+/// let bytes = xck::format::from_base64(&b64_string);
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -19,6 +31,18 @@ pub fn from_base64(b64_string: &str) -> Result<Vec<u8>> {
 /// Base64 Encode.
 /// 
 /// constant time.
+/// 
+/// # Example
+/// ```
+/// let bytes: [u8; 5] = [104, 101, 108, 108, 111];
+/// 
+/// let b64_string = xck::format::to_base64(bytes);
+/// 
+/// println!("{:?}",b64_string);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn to_base64(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -29,7 +53,19 @@ pub fn to_base64(bytes: &[u8]) -> Result<String> {
     Ok(b64_string)
 }
 
-/// Hex Encode.
+/// Hex Decode.
+/// 
+/// # Example
+/// ```
+/// let hex_string: &str = "68656c6c6f";
+/// 
+/// let bytes = from_hex(hex_string);
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn from_hex(hex_string: &str) -> Vec<u8> {
     let bytes = hex_string.as_bytes();
 
@@ -52,7 +88,19 @@ pub fn from_hex(hex_string: &str) -> Vec<u8> {
     buf
 }
 
-/// Hex Decode.
+/// Hex Encode.
+/// 
+/// # Example
+/// ```
+/// let bytes: [u8; 5] = [104, 101, 108, 108, 111];
+/// 
+/// let hex_string = to_hex(bytes);
+/// 
+/// println!("{}",hex_string);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn to_hex(bytes: &[u8]) -> String {
     //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     const HEX_TABLE: [u8; 16] = [
