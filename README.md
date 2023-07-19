@@ -36,9 +36,7 @@ Base64 (constant time)
 Hex
 
 ## Random (CSPRNG)
-
-...
+Rand has internalized ChaCha20Rng.
 
 ## Compress
-
 ...
