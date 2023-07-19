@@ -59,7 +59,7 @@ pub fn to_base64(bytes: &[u8]) -> Result<String> {
 /// ```
 /// let hex_string: &str = "68656c6c6f";
 /// 
-/// let bytes = from_hex(hex_string);
+/// let bytes = xck::format::from_hex(hex_string);
 /// 
 /// println!("{:?}",bytes);
 /// ```
@@ -94,7 +94,7 @@ pub fn from_hex(hex_string: &str) -> Vec<u8> {
 /// ```
 /// let bytes: [u8; 5] = [104, 101, 108, 108, 111];
 /// 
-/// let hex_string = to_hex(bytes);
+/// let hex_string = xck::format::to_hex(bytes);
 /// 
 /// println!("{}",hex_string);
 /// ```
