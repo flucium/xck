@@ -8,18 +8,17 @@ pub mod symmetric;
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
-pub struct Error {
-    message: String,
-}
+// pub struct Error {
+//     message: String,
+// }
+pub struct Error(String);
 
 impl Error {
-    pub fn new(message: String) -> Self {
-        Self {
-            message: message,
-        }
+    fn new(message: String) -> Self {
+        Self(message)
     }
 
     pub fn message(&self) -> &str {
-        &self.message
+        &self.0
     }
 }
