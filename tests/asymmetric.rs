@@ -5,7 +5,7 @@ fn ed25519_sign() {
         67, 223, 238, 9, 34, 39, 44, 10, 51, 2, 56, 96,
     ];
 
-    // hello = [104, 101, 108, 108, 111]
+    // TEST_MESSAGE is hello
     const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
 
     const TEST_SIGNATURE: [u8; 64] = [
@@ -28,7 +28,7 @@ fn ed25519_verify() {
         242, 25, 168, 132, 53, 182, 187, 232, 142, 1, 1, 187,
     ];
 
-    // hello = [104, 101, 108, 108, 111]
+    // TEST_MESSAGE is hello
     const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
 
     const TEST_SIGNATURE: [u8; 64] = [
@@ -46,7 +46,7 @@ fn ed25519_verify() {
 
 #[test]
 fn ed25519() {
-    // hello = [104, 101, 108, 108, 111]
+    // TEST_MESSAGE is hello
     const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
 
     let (private_key, public_key) = xck::asymmetric::ed25519_gen_keypair();
