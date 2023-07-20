@@ -45,6 +45,20 @@ fn ed25519_verify() {
 }
 
 #[test]
+fn ed25519() {
+    // hello = [104, 101, 108, 108, 111]
+    const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
+
+    let (private_key, public_key) = xck::asymmetric::ed25519_gen_keypair();
+
+    let signature = xck::asymmetric::ed25519_sign(&private_key, &TEST_MESSAGE).unwrap();
+
+    let is_ok = xck::asymmetric::ed25519_verify(&public_key, &TEST_MESSAGE, &signature).is_ok();
+
+    assert_eq!(is_ok, true);
+}
+
+#[test]
 fn x25519_diffie_hellman() {
     let alice_private_key: [u8; 32] = [
         45, 162, 45, 39, 64, 231, 153, 194, 122, 98, 107, 62, 92, 11, 143, 141, 125, 225, 86, 3,
@@ -71,6 +85,19 @@ fn x25519_diffie_hellman() {
 
     let bob_shared: [u8; 32] =
         xck::asymmetric::x25519_diffie_hellman(&bob_private_key, &alice_public_key);
+
+    assert_eq!(alice_shared, bob_shared);
+}
+
+#[test]
+fn x25519() {
+    let (alice_private_key, alice_public_key) = xck::asymmetric::x25519_gen_keypair();
+
+    let (bob_private_key, bob_public_key) = xck::asymmetric::x25519_gen_keypair();
+
+    let alice_shared = xck::asymmetric::x25519_diffie_hellman(&alice_private_key, &bob_public_key);
+
+    let bob_shared = xck::asymmetric::x25519_diffie_hellman(&bob_private_key, &alice_public_key);
 
     assert_eq!(alice_shared, bob_shared);
 }
