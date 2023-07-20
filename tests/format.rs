@@ -2,6 +2,7 @@
 fn to_base64() {
     const TEST_B64_STRING: &str = "aGVsbG8=";
 
+    // TEST_BYTES is hello
     const TEST_BYTES: [u8; 5] = [104, 101, 108, 108, 111];
 
     assert_eq!(
@@ -24,6 +25,7 @@ fn from_base64() {
 
 #[test]
 fn to_hex() {
+    // TEST_BYTES is hello
     const TEST_BYTES: [u8; 5] = [104, 101, 108, 108, 111];
     
     const TEST_HEX_STRING:&str="68656c6c6f";
@@ -36,6 +38,7 @@ fn to_hex() {
 
 #[test]
 fn from_hex() {
+    // TEST_BYTES is hello
     const TEST_BYTES: [u8; 5] = [104, 101, 108, 108, 111];
     
     const TEST_HEX_STRING:&str="68656c6c6f";
