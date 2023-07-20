@@ -45,6 +45,16 @@ impl RngCore for Rand {
 /// ChaCha20Rng
 /// 
 /// Generates a 32-byte random bytes.
+/// 
+/// # Example
+/// ```
+/// let bytes = xck::rand::generate();
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn generate() -> [u8; SIZE_32] {
     gen_32()
 }
@@ -52,6 +62,16 @@ pub fn generate() -> [u8; SIZE_32] {
 /// ChaCha20Rng
 /// 
 /// Generates a 32-byte random bytes.
+/// 
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_32();
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn gen_32() -> [u8; SIZE_32] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_32]>()
 }
@@ -59,6 +79,16 @@ pub fn gen_32() -> [u8; SIZE_32] {
 /// ChaCha20Rng
 /// 
 /// Generates a 24-byte random bytes.
+/// 
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_24();
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn gen_24() -> [u8; SIZE_24] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_24]>()
 }
@@ -66,6 +96,16 @@ pub fn gen_24() -> [u8; SIZE_24] {
 /// ChaCha20Rng
 /// 
 /// Generates a 16-byte random bytes.
+/// 
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_16();
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn gen_16() -> [u8; SIZE_16] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_16]>()
 }
@@ -74,6 +114,16 @@ pub fn gen_16() -> [u8; SIZE_16] {
 /// ChaCha20Rng
 /// 
 /// Generates a 12-byte random bytes.
+/// 
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_12();
+/// 
+/// println!("{:?}",bytes);
+/// ```
+/// 
+/// # Returns
+/// ...
 pub fn gen_12() -> [u8; SIZE_12] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
