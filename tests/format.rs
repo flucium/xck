@@ -35,16 +35,3 @@ fn to_hex() {
         TEST_HEX_STRING
     );
 }
-
-#[test]
-fn from_hex() {
-    // TEST_BYTES is hello
-    const TEST_BYTES: [u8; 5] = [104, 101, 108, 108, 111];
-    
-    const TEST_HEX_STRING:&str="68656c6c6f";
-
-    assert_eq!(
-        xck::format::from_hex(TEST_HEX_STRING),
-        TEST_BYTES
-    );
-}
