@@ -17,7 +17,7 @@ const NAME: &str = "XCK";
 
 const VERSION: &str = "0.0.1";
 
-const AUTHOR: &str = "flucium <flucium@flucium.net>";
+const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
 
@@ -209,5 +209,4 @@ fn arg_type_of(string: String) -> ArgType {
 }
 
 fn main() {
-
 }
