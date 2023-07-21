@@ -1,5 +1,20 @@
+# XCK
+In a nutshell, XCK is a high-layer cryptographic framework.
 
+XCK is both a wrapper for cryptographic libraries and an application that performs cryptographic operations.
 
+It runs on many platforms and is intended to simplify and commonize the use(call) of cryptographic libraries.
+
+## Backend
+Use the following libraries as backend.
+
+- Rust Crypto<br>
+[https://github.com/RustCrypto/](https://github.com/RustCrypto/)
+
+- BLAKE3<br>
+[https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)
+
+# ...
 ## Symmetric
 AES-128-GCM
 

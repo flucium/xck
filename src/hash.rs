@@ -4,99 +4,24 @@ use blake3::Hasher as Blake3;
 
 use sha2::{digest::Digest, Sha256, Sha512, Sha512_256};
 
-use crate::{
-    size::{SIZE_32, SIZE_64},
-    // Error, Result,
-};
+// argon2 re-export
+// pub use argon2::{
+//     Algorithm as Argon2Algorithm, Argon2, Params as Argon2Params, Version as Argon2Version,
+// };
 
+use crate::size::{SIZE_32, SIZE_64};
 
 /// BLAKE3 KDF default context.
 pub const BLAKE3_DEFAULT_CONTEXT: &str = "XCK VERSION 0.0.1 BLAKE3 DEFAULT CONTEXT";
 
-// const BUFFER_SIZE: usize = 8192;
-// const BUFFER_SIZE: usize = 1024;
-
-/*
-    BLAKE3
-    blake3_mac_from_io(...)...{...}
-    blake3_xof_from_io(...)...{...}
-    blake3_from_io(...)...{...}
-    blake3_mac(...)...{...}
-    blake3_kdf(...)...{...}
-    blake3_xof(...)...{...}
-    blake3(...)...{...}
-*/
-
-// BLAKE3 Message authentication code from io reader.
-// pub fn blake3_mac_from_io<R>(key: &[u8; SIZE_32], r: &mut R) -> Result<[u8; SIZE_32]>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Blake3::new_keyed(key);
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new(err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(&buf);
-//     }
-
-//     Ok(hasher.finalize().into())
-// }
-
-// BLAKE3 Extend hash digest from io reader.
-// pub fn blake3_xof_from_io<R>(r: &mut R, dst: &mut [u8]) -> Result<()>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Blake3::new();
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new( err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(&buf);
-//     }
-
-//     hasher.finalize_xof().fill(dst);
-
-//     Ok(())
-// }
-
-// BLAKE3 Regular hash digest from io reader.
-// pub fn blake3_from_io<R>(r: &mut R) -> Result<[u8; SIZE_32]>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Blake3::new();
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new(err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(&buf);
-//     }
-
-//     Ok(hasher.finalize().into())
-// }
-
 /// BLAKE3 Message authentication code.
-/// 
+///
 /// # Example
 /// ```
 /// let key = xck::hash::blake3_kdf(xck::hash::BLAKE3_DEFAULT_CONTEXT,b"key material");
-/// 
+///
 /// let mac = xck::hash::blake3_mac(&key,b"message");
-/// 
+///
 /// println!("{:?}",mac);
 /// ```
 pub fn blake3_mac(key: &[u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
@@ -104,11 +29,11 @@ pub fn blake3_mac(key: &[u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
 }
 
 /// BLAKE3 Key derivation function.
-/// 
+///
 /// # Example
 /// ```
 /// let key = xck::hash::blake3_kdf(xck::hash::BLAKE3_DEFAULT_CONTEXT,b"key material");
-/// 
+///
 /// println!("{:?}",key);
 /// ```
 pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
@@ -116,13 +41,13 @@ pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
 }
 
 /// BLAKE3 Extend hash digest.
-/// 
+///
 /// # Example
 /// ```
 /// let buffer:[u8;64] = [0u8;64];
-/// 
+///
 /// xck::hash::blake3_xof(b"hello",&mut buffer);
-/// 
+///
 /// println!("{:?}",digest);
 /// ```
 pub fn blake3_xof(bytes: &[u8], dst: &mut [u8]) {
@@ -130,93 +55,23 @@ pub fn blake3_xof(bytes: &[u8], dst: &mut [u8]) {
 }
 
 /// BLAKE3 Regular hash digest.
-/// 
+///
 /// # Example
 /// ```
 /// let digest = xck::hash::blake3(b"hello");
-/// 
+///
 /// println!("{:?}",digest);
 /// ```
 pub fn blake3(bytes: &[u8]) -> [u8; SIZE_32] {
     blake3::hash(bytes).into()
 }
 
-/*
-    SHA2
-    sha512_256_from_io(...)...{...}
-    sha512_from_io(...)...{...}
-    sha256_from_io(...)...{...}
-    sha512_256(...)...{...}
-    sha512(...)...{...}
-    sha256(...)...{...}
-*/
-
-// SHA512/256 hash digest from io reader.
-// pub fn sha512_256_from_io<R>(r: &mut R) -> Result<[u8; SIZE_32]>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Sha512_256::new();
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new(err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(buf);
-//     }
-
-//     Ok(hasher.finalize().into())
-// }
-
-// SHA512 hash digest from io reader.
-// pub fn sha512_from_io<R>(r: &mut R) -> Result<[u8; SIZE_64]>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Sha512::new();
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new(err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(buf);
-//     }
-
-//     Ok(hasher.finalize().into())
-// }
-
-// SHA256 hash digest from io reader.
-// pub fn sha256_from_io<R>(r: &mut R) -> Result<[u8; SIZE_32]>
-// where
-//     R: io::Read,
-// {
-//     let mut hasher = Sha256::new();
-
-//     let mut buf = [0u8; BUFFER_SIZE];
-
-//     while r
-//         .read(&mut buf)
-//         .map_err(|err| Error::new( err.to_string()))?
-//         > 0
-//     {
-//         hasher.update(buf);
-//     }
-
-//     Ok(hasher.finalize().into())
-// }
-
 /// SHA512/256 hash digest.
-/// 
+///
 /// # Example
 /// ```
 /// let digest = xck::hash::sha512_256(b"hello");
-/// 
+///
 /// println!("{:?}",digest);
 /// ```
 pub fn sha512_256(bytes: &[u8]) -> [u8; SIZE_32] {
@@ -224,11 +79,11 @@ pub fn sha512_256(bytes: &[u8]) -> [u8; SIZE_32] {
 }
 
 /// SHA512 hash digest.
-/// 
+///
 /// # Example
 /// ```
 /// let digest = xck::hash::sha512(b"hello");
-/// 
+///
 /// println!("{:?}",digest);
 /// ```
 pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
@@ -236,11 +91,11 @@ pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
 }
 
 /// SHA256 hash digest.
-/// 
+///
 /// # Example
 /// ```
 /// let digest = xck::hash::sha256(b"hello");
-/// 
+///
 /// println!("{:?}",digest);
 /// ```
 pub fn sha256(bytes: &[u8]) -> [u8; SIZE_32] {
