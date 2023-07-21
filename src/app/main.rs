@@ -2,18 +2,16 @@ use std::{
     self,
     fs,
     // io::{self, stderr, stdout, Read, Write},
-    io::{self, Read},
+    io::{self, Read, Write},
     path::{Path, PathBuf},
 };
 
-use aead::KeyInit;
 use clap::{
     Args as ClapArgs,
     Parser as ClapParser,
     Subcommand as ClapSubcommand,
     // ValueEnum as ClapValueEnum,
 };
-use rand::RngCore;
 
 const NAME: &str = "XCK";
 
@@ -205,5 +203,5 @@ fn arg_type_of(string: String) -> ArgType {
 }
 
 fn main() {
-    app()
+    
 }
