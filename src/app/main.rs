@@ -6,12 +6,14 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use aead::KeyInit;
 use clap::{
     Args as ClapArgs,
     Parser as ClapParser,
     Subcommand as ClapSubcommand,
     // ValueEnum as ClapValueEnum,
 };
+use rand::RngCore;
 
 const NAME: &str = "XCK";
 
@@ -20,6 +22,9 @@ const VERSION: &str = "0.0.1";
 const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
+
+const RANDOM_MAX_SIZE: usize = 32;
+const RANDOM_MIN_SIZE: usize = 1;
 
 #[derive(ClapParser)]
 #[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
@@ -69,10 +74,6 @@ struct HexArgs {
     #[arg(long = "input", short = 'i')]
     #[clap(alias = "in")]
     input: String,
-    // output is...
-    // #[arg(long = "output", short = 'o')]
-    // #[clap(alias = "out")]
-    // output: Option<String>,
 }
 
 #[derive(ClapArgs)]
@@ -91,10 +92,6 @@ struct Base64Args {
     #[arg(long = "input", short = 'i')]
     #[clap(alias = "in")]
     input: String,
-    // output is...
-    // #[arg(long = "output", short = 'o')]
-    // #[clap(alias = "out")]
-    // output: Option<String>,
 }
 
 #[derive(ClapArgs)]
@@ -153,9 +150,8 @@ struct XChaCha20Poly1305Args {
 
 #[derive(ClapArgs)]
 struct RandomArgs {
-    // #[arg(long = "length", short = 'l', default_value = "32")]
-    // #[clap(alias = "len")]
-    // length: usize,
+    #[arg(long = "size", short = 's', default_value = "32")]
+    size: usize,
 }
 
 fn app() {
@@ -163,7 +159,7 @@ fn app() {
     match command.subcommand {
         Subcommand::Hex(args) => {}
         Subcommand::Base64(args) => todo!(),
-        Subcommand::Random(args) => todo!(),
+        Subcommand::Random(args) => {}
         Subcommand::ChaCha20Poly1305(args) => todo!(),
         Subcommand::XChaCha20Poly1305(args) => todo!(),
     }
@@ -208,4 +204,6 @@ fn arg_type_of(string: String) -> ArgType {
     }
 }
 
-fn main() {}
+fn main() {
+    app()
+}

@@ -99,9 +99,6 @@ pub const BLAKE3_DEFAULT_CONTEXT: &str = "XCK VERSION 0.0.1 BLAKE3 DEFAULT CONTE
 /// 
 /// println!("{:?}",mac);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn blake3_mac(key: &[u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
     blake3::keyed_hash(key, message).into()
 }
@@ -114,9 +111,6 @@ pub fn blake3_mac(key: &[u8; SIZE_32], message: &[u8]) -> [u8; SIZE_32] {
 /// 
 /// println!("{:?}",key);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
     blake3::derive_key(context, material).into()
 }
@@ -131,9 +125,6 @@ pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
 /// 
 /// println!("{:?}",digest);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn blake3_xof(bytes: &[u8], dst: &mut [u8]) {
     Blake3::new().update(bytes).finalize_xof().fill(dst);
 }
@@ -146,9 +137,6 @@ pub fn blake3_xof(bytes: &[u8], dst: &mut [u8]) {
 /// 
 /// println!("{:?}",digest);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn blake3(bytes: &[u8]) -> [u8; SIZE_32] {
     blake3::hash(bytes).into()
 }
@@ -231,9 +219,6 @@ pub fn blake3(bytes: &[u8]) -> [u8; SIZE_32] {
 /// 
 /// println!("{:?}",digest);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn sha512_256(bytes: &[u8]) -> [u8; SIZE_32] {
     Sha512_256::digest(bytes).into()
 }
@@ -246,9 +231,6 @@ pub fn sha512_256(bytes: &[u8]) -> [u8; SIZE_32] {
 /// 
 /// println!("{:?}",digest);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
     Sha512::digest(bytes).into()
 }
@@ -261,9 +243,6 @@ pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
 /// 
 /// println!("{:?}",digest);
 /// ```
-/// 
-/// # Returns
-/// ...
 pub fn sha256(bytes: &[u8]) -> [u8; SIZE_32] {
     Sha256::digest(bytes).into()
 }

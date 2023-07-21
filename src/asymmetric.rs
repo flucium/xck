@@ -8,15 +8,14 @@ use crate::{
 
 /// Ed25519 generate keypair.
 ///
+/// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
+///
 /// # Example
 /// ```
 /// let (private_key,public_key) = xck::asymmetric::ed25519_gen_keypair();
 ///
 /// println!("{:?}\n{:?}",private_key,public_key);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     let signing_key = ed25519_dalek::SigningKey::generate(&mut Rand);
 
@@ -29,6 +28,10 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
 
 /// Ed25519 Verifier.
 ///
+/// Enter your public_key, message, and signature.
+/// 
+/// Result does not return an error if the authentication is successful. That is, `is_ok() == true`.
+/// 
 /// # Example
 /// ```
 /// let public_key:[u8;32] = [
@@ -49,9 +52,6 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
 ///
 /// println!("{}",is_ok);
 /// ```
-///
-/// # Returns
-/// ....
 pub fn ed25519_verify(
     public_key: &[u8; SIZE_32],
     message: &[u8],
@@ -65,6 +65,10 @@ pub fn ed25519_verify(
 
 /// Ed25519 Signer.
 ///
+/// Enter your private_key and message.
+/// 
+/// Signing with the correct keypair returns the signature. If it fails to sign with the wrong keypair, it returns an error message.
+/// 
 /// # Example
 /// ```
 /// let private_key:[u8; 32] = [
@@ -78,9 +82,6 @@ pub fn ed25519_verify(
 ///
 /// println!("{:?}",signature);
 /// ```
-///
-/// # Returns
-/// ....
 pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; SIZE_64]> {
     let signature = ed25519_dalek::SigningKey::from_bytes(private_key)
         .try_sign(message)
@@ -91,15 +92,14 @@ pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; 
 
 /// X25519
 ///
+/// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
+/// 
 /// # Example
 /// ```
 /// let (private_key,public_key) = xck::asymmetric::x25519_gen_keypair();
 ///
 /// println!("{:?}\n{:?}",private_key,public_key);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     let static_secret = x25519_dalek::StaticSecret::random_from_rng(&mut Rand);
 
@@ -112,6 +112,8 @@ pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
 
 /// X25519 Diffie Hellman
 ///
+/// You can obtain the same symmetric key with your private_key and the other their_public_key.
+/// 
 /// # Example
 /// ```
 /// let alice_private_key: [u8; 32] = [
@@ -140,17 +142,14 @@ pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
 ///
 /// println!("{}",alice_shared == bob_shared);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn x25519_diffie_hellman(
     private_key: &[u8; SIZE_32],
-    their_public: &[u8; SIZE_32],
+    their_public_key: &[u8; SIZE_32],
 ) -> [u8; SIZE_32] {
     let static_secret = x25519_dalek::StaticSecret::from(private_key.to_owned());
 
     let shared_secret =
-        static_secret.diffie_hellman(&x25519_dalek::PublicKey::from(their_public.to_owned()));
+        static_secret.diffie_hellman(&x25519_dalek::PublicKey::from(their_public_key.to_owned()));
 
     shared_secret.to_bytes()
 }

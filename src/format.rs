@@ -15,9 +15,6 @@ const BASE64_BUFFER_SIZE: usize = 1024;
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn base64_decode(b64_string: &str) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -40,9 +37,6 @@ pub fn base64_decode(b64_string: &str) -> Result<Vec<u8>> {
 ///
 /// println!("{:?}",b64_string);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn base64_encode(bytes: &[u8]) -> Result<String> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
@@ -63,9 +57,6 @@ pub fn base64_encode(bytes: &[u8]) -> Result<String> {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn hex_decode(hex_string: &str) -> Vec<u8> {
     let bytes = hex_string.as_bytes();
 
@@ -98,9 +89,6 @@ pub fn hex_decode(hex_string: &str) -> Vec<u8> {
 ///
 /// println!("{}",hex_string);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn hex_encode(bytes: &[u8]) -> String {
     //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     const HEX_TABLE: [u8; 16] = [
