@@ -12,6 +12,12 @@ use aes_gcm::{Aes128Gcm, Aes256Gcm};
 type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aead::consts::U12>;
 
 /// AES 256 GCM Decrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_256_gcm_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -22,6 +28,12 @@ pub fn aes_256_gcm_decrypt(
 }
 
 /// AES 256 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_256_gcm_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -32,6 +44,12 @@ pub fn aes_256_gcm_encrypt(
 }
 
 /// AES 192 Decrypt
+///
+/// The Key is 24-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_192_gcm_decrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -42,6 +60,12 @@ pub fn aes_192_gcm_decrypt(
 }
 
 /// AES 192 Encrypt
+///
+/// The Key is 24-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_192_gcm_encrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -52,6 +76,12 @@ pub fn aes_192_gcm_encrypt(
 }
 
 /// AES 128 Decrypt
+///
+/// The Key is 16-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_128_gcm_decrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -62,6 +92,12 @@ pub fn aes_128_gcm_decrypt(
 }
 
 /// AES 128 Encrypt
+///
+/// The Key is 16-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_128_gcm_encrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -72,6 +108,12 @@ pub fn aes_128_gcm_encrypt(
 }
 
 /// XChaCha20 Poly1305 Decrypt
+///
+/// The Key is 32-byte and the Nonce is 24-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn xchacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -87,6 +129,12 @@ pub fn xchacha20_poly1305_decrypt(
 }
 
 /// XChaCha20 Poly1305 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 24-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn xchacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -102,6 +150,12 @@ pub fn xchacha20_poly1305_encrypt(
 }
 
 /// ChaCha20 Poly1305 Decrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn chacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -117,6 +171,12 @@ pub fn chacha20_poly1305_decrypt(
 }
 
 /// ChaCha20 Poly1305 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn chacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
