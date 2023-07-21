@@ -52,9 +52,6 @@ impl RngCore for Rand {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn generate() -> [u8; SIZE_32] {
     gen_32()
 }
@@ -69,9 +66,6 @@ pub fn generate() -> [u8; SIZE_32] {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn gen_32() -> [u8; SIZE_32] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_32]>()
 }
@@ -86,9 +80,6 @@ pub fn gen_32() -> [u8; SIZE_32] {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn gen_24() -> [u8; SIZE_24] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_24]>()
 }
@@ -103,9 +94,6 @@ pub fn gen_24() -> [u8; SIZE_24] {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn gen_16() -> [u8; SIZE_16] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_16]>()
 }
@@ -120,9 +108,6 @@ pub fn gen_16() -> [u8; SIZE_16] {
 ///
 /// println!("{:?}",bytes);
 /// ```
-///
-/// # Returns
-/// ...
 pub fn gen_12() -> [u8; SIZE_12] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
