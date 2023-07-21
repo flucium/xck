@@ -1,3 +1,5 @@
+<img src="./image.png" width=200 heigth=400>
+
 # XCK
 In a nutshell, XCK is a high-layer cryptographic framework.
 
