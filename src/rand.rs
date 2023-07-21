@@ -2,11 +2,14 @@ use crate::size::*;
 
 use rand::{Rng, SeedableRng};
 
-use rand_chacha::ChaCha20Rng;
+use rand_chacha::{
+    rand_core::{CryptoRng, Error, RngCore},
+    ChaCha20Rng,
+};
 
-use rand_core::{CryptoRng, Error, RngCore};
-
-/// A cryptography rand generator. ChaCha20Rng.
+/// Rand implements RngCore and CryptoRng.
+///
+/// Internally, ChaCha20Rng.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Rand;
 
@@ -40,12 +43,71 @@ impl RngCore for Rand {
 }
 
 /// ChaCha20Rng
-//
-/// Generates a 32-byte cryptographic pseudo random number.
+///
+/// Generates a 32-byte random bytes.
+///
+/// # Example
+/// ```
+/// let bytes = xck::rand::generate();
+///
+/// println!("{:?}",bytes);
+/// ```
 pub fn generate() -> [u8; SIZE_32] {
-    let mut rng = ChaCha20Rng::from_entropy();
+    gen_32()
+}
 
-    let bytes = rng.gen::<[u8; SIZE_32]>();
+/// ChaCha20Rng
+///
+/// Generates a 32-byte random bytes.
+///
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_32();
+///
+/// println!("{:?}",bytes);
+/// ```
+pub fn gen_32() -> [u8; SIZE_32] {
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_32]>()
+}
 
-    bytes
+/// ChaCha20Rng
+///
+/// Generates a 24-byte random bytes.
+///
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_24();
+///
+/// println!("{:?}",bytes);
+/// ```
+pub fn gen_24() -> [u8; SIZE_24] {
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_24]>()
+}
+
+/// ChaCha20Rng
+///
+/// Generates a 16-byte random bytes.
+///
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_16();
+///
+/// println!("{:?}",bytes);
+/// ```
+pub fn gen_16() -> [u8; SIZE_16] {
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_16]>()
+}
+
+/// ChaCha20Rng
+///
+/// Generates a 12-byte random bytes.
+///
+/// # Example
+/// ```
+/// let bytes = xck::rand::gen_12();
+///
+/// println!("{:?}",bytes);
+/// ```
+pub fn gen_12() -> [u8; SIZE_12] {
+    ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }

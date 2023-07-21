@@ -1,40 +1,24 @@
 pub mod asymmetric;
+pub mod format;
 pub mod hash;
 pub mod rand;
-pub mod size;
+mod size;
 pub mod symmetric;
-pub mod utils;
-pub mod deflate;
 
-/// Result ...
 pub type Result<T> = core::result::Result<T, Error>;
 
-/// Error ...
 #[derive(Debug)]
-pub struct Error {
-    kind: ErrorKind,
-    message: String,
-}
+// pub struct Error {
+//     message: String,
+// }
+pub struct Error(String);
 
 impl Error {
-    pub fn new(kind: ErrorKind, message: String) -> Self {
-        Self {
-            kind: kind,
-            message: message,
-        }
-    }
-
-    pub fn kind(&self) -> &ErrorKind {
-        &self.kind
+    fn new(message: String) -> Self {
+        Self(message)
     }
 
     pub fn message(&self) -> &str {
-        &self.message
+        &self.0
     }
-}
-
-/// ErrorKind ...
-#[derive(Debug)]
-pub enum ErrorKind {
-    Todo,
 }

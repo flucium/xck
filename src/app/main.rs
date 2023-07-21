@@ -1,18 +1,19 @@
 use std::{
     self,
     fs,
-
     // io::{self, stderr, stdout, Read, Write},
     io::{self, Read},
     path::{Path, PathBuf},
 };
 
+use aead::KeyInit;
 use clap::{
     Args as ClapArgs,
     Parser as ClapParser,
     Subcommand as ClapSubcommand,
     // ValueEnum as ClapValueEnum,
 };
+use rand::RngCore;
 
 const NAME: &str = "XCK";
 
@@ -21,6 +22,9 @@ const VERSION: &str = "0.0.1";
 const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
+
+const RANDOM_MAX_SIZE: usize = 32;
+const RANDOM_MIN_SIZE: usize = 1;
 
 #[derive(ClapParser)]
 #[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
@@ -34,150 +38,11 @@ struct Command {
 enum Subcommand {
     /// hex is...
     #[command(name = "hex")]
-    Hex {
-        /// encode is...
-        #[arg(long = "encode", short = 'e')]
-        #[clap(alias = "enc")]
-        encode: bool,
+    Hex(HexArgs),
 
-        /// decode is...
-        #[arg(long = "decode", short = 'd')]
-        #[clap(alias = "dec")]
-        decode: bool,
-
-        /// message is...
-        #[arg(long = "message", short = 'm')]
-        #[clap(alias = "msg")]
-        message: String,
-    },
-
-    // base16 is...
-    // #[command(name = "base16")]
-    // Base16 {
-    //     /// encode is...
-    //     #[arg(long = "encode", short = 'e')]
-    //     #[clap(alias = "enc")]
-    //     encode: bool,
-
-    //     /// decode is...
-    //     #[arg(long = "decode", short = 'd')]
-    //     #[clap(alias = "dec")]
-    //     decode: bool,
-
-    //     /// message is...
-    //     #[arg(long = "message", short = 'm')]
-    //     #[clap(alias = "msg")]
-    //     message: String,
-    // },
-
-    // base32 is...
-    // #[command(name = "base32")]
-    // Base32 {
-    //     /// encode is...
-    //     #[arg(long = "encode", short = 'e')]
-    //     #[clap(alias = "enc")]
-    //     encode: bool,
-
-    //     /// decode is...
-    //     #[arg(long = "decode", short = 'd')]
-    //     #[clap(alias = "dec")]
-    //     decode: bool,
-
-    //     /// message is...
-    //     #[arg(long = "message", short = 'm')]
-    //     #[clap(alias = "msg")]
-    //     message: String,
-    // },
-    /// base64 is...
+    /// base64 is...    
     #[command(name = "base64")]
-    Base64 {
-        /// encode is...
-        #[arg(long = "encode", short = 'e')]
-        #[clap(alias = "enc")]
-        encode: bool,
-
-        /// decode is...
-        #[arg(long = "decode", short = 'd')]
-        #[clap(alias = "dec")]
-        decode: bool,
-
-        /// message is...
-        #[arg(long = "message", short = 'm')]
-        #[clap(alias = "msg")]
-        message: String,
-    },
-
-    /// deflate is...
-    #[command(name = "deflate")]
-    Deflate {
-        /// encode is...
-        #[arg(long = "encode", short = 'e')]
-        #[clap(alias = "enc")]
-        encode: bool,
-
-        /// decode is...
-        #[arg(long = "decode", short = 'd')]
-        #[clap(alias = "dec")]
-        decode: bool,
-
-        /// level is...
-        #[arg(long = "level", short = 'l', default_value = "6")]
-        #[clap(alias = "lv")]
-        level: usize,
-
-        /// message is...
-        #[arg(long = "message", short = 'm')]
-        #[clap(alias = "msg")]
-        message: String,
-    },
-
-    /// zlib is...  
-    #[command(name = "zlib")]
-    Zlib {
-        /// encode is...
-        #[arg(long = "encode", short = 'e')]
-        #[clap(alias = "enc")]
-        encode: bool,
-
-        /// decode is...
-        #[arg(long = "decode", short = 'd')]
-        #[clap(alias = "dec")]
-        decode: bool,
-
-        /// level is...
-        #[arg(long = "level", short = 'l', default_value = "6")]
-        #[clap(alias = "lv")]
-        level: usize,
-
-        /// message is...
-        #[arg(long = "message", short = 'm')]
-        #[clap(alias = "msg")]
-        message: String,
-    },
-
-    /// gz is...
-    #[command(name = "gz")]
-    Gz {
-        /// encode is...
-        #[arg(long = "encode", short = 'e')]
-        #[clap(alias = "enc")]
-        encode: bool,
-
-        /// decode is...
-        #[arg(long = "decode", short = 'd')]
-        #[clap(alias = "dec")]
-        decode: bool,
-
-        /// level is...
-        #[arg(long = "level", short = 'l', default_value = "6")]
-        #[clap(alias = "lv")]
-        level: usize,
-
-        /// message is...
-        #[arg(long = "message", short = 'm')]
-        #[clap(alias = "msg")]
-        message: String,
-    },
+    Base64(Base64Args),
 
     /// random is...
     #[command(name = "random")]
@@ -191,38 +56,42 @@ enum Subcommand {
     /// xchacha20poly1305 is...
     #[command(name = "xchacha20poly1305")]
     XChaCha20Poly1305(XChaCha20Poly1305Args),
-    //
-    //
-    //
-    // ToDo
-    // #[command(name = "aes-128-gcm")]
-    // Aes128Gcm
+}
 
-    // #[command(name = "aes-192-gcm")]
-    // Aes192Gcm
+#[derive(ClapArgs)]
+struct HexArgs {
+    /// encode is...
+    #[arg(long = "encode", short = 'e')]
+    #[clap(alias = "enc")]
+    encode: bool,
 
-    // #[command(name = "aes-256-gcm")]
-    // Aes256Gcm
+    /// decode is...
+    #[arg(long = "decode", short = 'd')]
+    #[clap(alias = "dec")]
+    decode: bool,
 
-    // #[command(name = "argon2")]
-    // Argon2 (Variant i/d/id)
+    /// input is...
+    #[arg(long = "input", short = 'i')]
+    #[clap(alias = "in")]
+    input: String,
+}
 
-    // #[command(name = "pbkdf2")]
-    // Pbkdf2
+#[derive(ClapArgs)]
+struct Base64Args {
+    /// encode is...
+    #[arg(long = "encode", short = 'e')]
+    #[clap(alias = "enc")]
+    encode: bool,
 
-    // #[command(name = "blake3")]
-    // #[clap(alias = "b3")]
-    // Blake3 (Variant regular/kdf/xof/mac)
+    /// decode is...
+    #[arg(long = "decode", short = 'd')]
+    #[clap(alias = "dec")]
+    decode: bool,
 
-    // #[command(name = "sha256")]
-    // #[clap(alias = "sha2")]
-    // Sha256
-
-    // #[command(name = "sha512")]
-    // Sha512
-
-    // #[command(name = "sha512-256")]
-    // Sha512_256
+    /// input is...
+    #[arg(long = "input", short = 'i')]
+    #[clap(alias = "in")]
+    input: String,
 }
 
 #[derive(ClapArgs)]
@@ -281,53 +150,16 @@ struct XChaCha20Poly1305Args {
 
 #[derive(ClapArgs)]
 struct RandomArgs {
-    // #[arg(long = "length", short = 'l', default_value = "32")]
-    // #[clap(alias = "len")]
-    // length: usize,
+    #[arg(long = "size", short = 's', default_value = "32")]
+    size: usize,
 }
 
 fn app() {
     let command = Command::parse();
     match command.subcommand {
-        Subcommand::Hex {
-            encode,
-            decode,
-            message,
-        } => todo!(),
-        // Subcommand::Base16 {
-        //     encode,
-        //     decode,
-        //     message,
-        // } => todo!(),
-        // Subcommand::Base32 {
-        //     encode,
-        //     decode,
-        //     message,
-        // } => todo!(),
-        Subcommand::Base64 {
-            encode,
-            decode,
-            message,
-        } => todo!(),
-        Subcommand::Deflate {
-            encode,
-            decode,
-            level,
-            message,
-        } => todo!(),
-        Subcommand::Zlib {
-            encode,
-            decode,
-            level,
-            message,
-        } => todo!(),
-        Subcommand::Gz {
-            encode,
-            decode,
-            level,
-            message,
-        } => todo!(),
-        Subcommand::Random(args) => todo!(),
+        Subcommand::Hex(args) => {}
+        Subcommand::Base64(args) => todo!(),
+        Subcommand::Random(args) => {}
         Subcommand::ChaCha20Poly1305(args) => todo!(),
         Subcommand::XChaCha20Poly1305(args) => todo!(),
     }
@@ -352,6 +184,15 @@ fn read_file(path: &Path) -> io::Result<Vec<u8>> {
     Ok(buf)
 }
 
+#[derive(Debug)]
+enum ArgType {
+    Cli(String),
+    File(PathBuf),
+}
+
+// file:testfile.txt -> file
+// cli:hello_world -> cli
+// hello_world -> cli
 fn arg_type_of(string: String) -> ArgType {
     match string.split_once(':') {
         None => ArgType::Cli(string),
@@ -361,12 +202,6 @@ fn arg_type_of(string: String) -> ArgType {
             _ => ArgType::Cli(b.to_string()),
         },
     }
-}
-
-#[derive(Debug)]
-enum ArgType {
-    Cli(String),
-    File(PathBuf),
 }
 
 fn main() {

@@ -1,152 +1,195 @@
-use crate::{
-    size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
-    Error, ErrorKind, Result,
-};
-
 use aead::{Aead, KeyInit, Payload};
 
-use aes_gcm::{Aes128Gcm, Aes256Gcm};
+use crate::{
+    size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
+    Error, Result,
+};
 
 use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 
-type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aes_gcm::aead::consts::U12>;
+use aes_gcm::{Aes128Gcm, Aes256Gcm};
 
-/*
-    AES GCM
-    aes_256_gcm_decrypt(...)...{...}
-    aes_256_gcm_encrypt(...)...{...}
-    aes_192_gcm_decrypt(...)...{...}
-    aes_192_gcm_encrypt(...)...{...}
-    aes_128_gcm_decrypt(...)...{...}
-    aes_128_gcm_encrypt(...)...{...}
+type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aead::consts::U12>;
 
-*/
-
+/// AES 256 GCM Decrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_256_gcm_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     cipher: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes256Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_encrypt(aead, nonce, aad, cipher)
+    aead_decrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 256 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_256_gcm_encrypt(
     key: &[u8; SIZE_32],
-    nonce:& [u8; SIZE_12],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     plain: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes256Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_encrypt(aead, nonce, aad, plain)
+    aead_encrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
+/// AES 192 Decrypt
+///
+/// The Key is 24-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_192_gcm_decrypt(
-    key:& [u8; SIZE_24],
-    nonce:& [u8; SIZE_12],
+    key: &[u8; SIZE_24],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     cipher: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes192Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_decrypt(aead, nonce, aad, cipher)
+    aead_decrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 192 Encrypt
+///
+/// The Key is 24-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_192_gcm_encrypt(
     key: &[u8; SIZE_24],
-    nonce:& [u8; SIZE_12],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     plain: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes192Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_encrypt(aead, nonce, aad, plain)
+    aead_encrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
+
+/// AES 128 Decrypt
+///
+/// The Key is 16-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
 pub fn aes_128_gcm_decrypt(
-    key:& [u8; SIZE_16],
-    nonce:& [u8; SIZE_12],
+    key: &[u8; SIZE_16],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     cipher: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes128Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_decrypt(aead, nonce, aad, cipher)
+    aead_decrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
+/// AES 128 Encrypt
+///
+/// The Key is 16-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
 pub fn aes_128_gcm_encrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     plain: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = Aes128Gcm::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-
-    aead_encrypt(aead, nonce, aad, plain)
+    aead_encrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
-/*
-    ChaCha Poly1305
-    xchacha20_poly1305_decrypt(...)...{...}
-    xchacha20_poly1305_encrypt(...)...{...}
-    chacha20_poly1305_decrypt(...)...{...}
-    chacha20_poly1305_encrypt(...)...{...}
-*/
-
-pub fn xchacha20poly1305_decrypt(
+/// XChaCha20 Poly1305 Decrypt
+///
+/// The Key is 32-byte and the Nonce is 24-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
+pub fn xchacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
-    nonce:& [u8; SIZE_24],
+    nonce: &[u8; SIZE_24],
     aad: &[u8],
     cipher: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = XChaCha20Poly1305::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-    aead_decrypt(aead, nonce, aad, cipher)
+    aead_decrypt(
+        XChaCha20Poly1305::new_from_slice(key).unwrap(),
+        nonce,
+        aad,
+        cipher,
+    )
 }
 
-pub fn xchacha20poly1305_encrypt(
+/// XChaCha20 Poly1305 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 24-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
+pub fn xchacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
-    nonce:& [u8; SIZE_24],
+    nonce: &[u8; SIZE_24],
     aad: &[u8],
     plain: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = XChaCha20Poly1305::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-    aead_encrypt(aead, nonce, aad, plain)
+    aead_encrypt(
+        XChaCha20Poly1305::new_from_slice(key).unwrap(),
+        nonce,
+        aad,
+        plain,
+    )
 }
 
-pub fn chacha20poly1305_decrypt(
+/// ChaCha20 Poly1305 Decrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is cipher bytes.
+pub fn chacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
-    nonce:& [u8; SIZE_12],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     cipher: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = ChaCha20Poly1305::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-    aead_decrypt(aead, nonce, aad, cipher)
+    aead_decrypt(
+        ChaCha20Poly1305::new_from_slice(key).unwrap(),
+        nonce,
+        aad,
+        cipher,
+    )
 }
 
-pub fn chacha20poly1305_encrypt(
+/// ChaCha20 Poly1305 Encrypt
+///
+/// The Key is 32-byte and the Nonce is 12-byte.
+///
+/// If you want Aad to be empty, use &[].
+/// 
+/// Message is plain bytes.
+pub fn chacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
-    nonce:& [u8; SIZE_12],
+    nonce: &[u8; SIZE_12],
     aad: &[u8],
     plain: &[u8],
 ) -> Result<Vec<u8>> {
-    let aead = ChaCha20Poly1305::new_from_slice(key)
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
-    aead_encrypt(aead, nonce, aad, plain)
+    aead_encrypt(
+        ChaCha20Poly1305::new_from_slice(key).unwrap(),
+        nonce,
+        aad,
+        plain,
+    )
 }
-
-
-// Aead Encryptor/Decryptor
 
 fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Result<Vec<u8>> {
     let plain = aead
@@ -157,7 +200,7 @@ fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Res
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+        .map_err(|err| Error::new(err.to_string()))?;
 
     Ok(plain)
 }
@@ -171,86 +214,7 @@ fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Resu
                 aad: aad,
             },
         )
-        .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?;
+        .map_err(|err| Error::new( err.to_string()))?;
 
     Ok(cipher)
 }
-
-// ______________________________
-// /// Symmetric ...
-// pub enum Symmetric<'a> {
-//     ChaCha20Poly1305 {
-//         key: Box<[u8; SIZE_32]>,
-//         nonce: Box<[u8; SIZE_12]>,
-//         aad: &'a [u8],
-//         msg: &'a [u8],
-//     },
-//     XChaCha20Poly1305 {
-//         key: Box<[u8; SIZE_32]>,
-//         nonce: Box<[u8; SIZE_24]>,
-//         aad: &'a [u8],
-//         msg: &'a [u8],
-//     },
-// }
-
-// impl Symmetric<'_> {
-//     /// Encrypt ...
-//     pub fn encrypt(self) -> Result<Vec<u8>> {
-//         match self {
-//             Self::ChaCha20Poly1305 {
-//                 key,
-//                 nonce,
-//                 aad,
-//                 msg,
-//             } => aead_encrypt(
-//                 ChaCha20Poly1305::new_from_slice(&*key)
-//                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-//                 &*nonce,
-//                 aad,
-//                 msg,
-//             ),
-//             Self::XChaCha20Poly1305 {
-//                 key,
-//                 nonce,
-//                 aad,
-//                 msg,
-//             } => aead_encrypt(
-//                 XChaCha20Poly1305::new_from_slice(&*key)
-//                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-//                 &*nonce,
-//                 aad,
-//                 msg,
-//             ),
-//         }
-//     }
-
-//     /// Decrypt ...
-//     pub fn decrypt(self) -> Result<Vec<u8>> {
-//         match self {
-//             Self::ChaCha20Poly1305 {
-//                 key,
-//                 nonce,
-//                 aad,
-//                 msg,
-//             } => aead_decrypt(
-//                 ChaCha20Poly1305::new_from_slice(&*key)
-//                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-//                 &*nonce,
-//                 aad,
-//                 msg,
-//             ),
-//             Self::XChaCha20Poly1305 {
-//                 key,
-//                 nonce,
-//                 aad,
-//                 msg,
-//             } => aead_decrypt(
-//                 XChaCha20Poly1305::new_from_slice(&*key)
-//                     .map_err(|err| Error::new(ErrorKind::Todo, err.to_string()))?,
-//                 &*nonce,
-//                 aad,
-//                 msg,
-//             ),
-//         }
-//     }
-// }
