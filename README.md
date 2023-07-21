@@ -9,10 +9,10 @@ It runs on many platforms and is intended to simplify and commonize the use(call
 Use the following libraries as backend.
 
 - Rust Crypto<br>
-<small>[https://github.com/RustCrypto/](https://github.com/RustCrypto/)</small>
+[https://github.com/RustCrypto/](https://github.com/RustCrypto/)
 
-- BLAKE3https://github.com/BLAKE3-team/BLAKE3/<br>
-<small>[https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)</small>
+- BLAKE3<br>
+[https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)
 
 # ...
 ## Symmetric
