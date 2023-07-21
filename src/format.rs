@@ -128,7 +128,7 @@ pub fn hex_encode(bytes: &[u8]) -> String {
 }
 
 
-/// PEM Encode
+/// PEM Encode (pem rfc7468)
 ///
 /// Only 32-byte keypair are supported. Specifically X25519 and Ed25519.
 /// 
@@ -151,7 +151,7 @@ pub fn pem_encode<'a>(label: Label<'a>, key: &[u8; SIZE_32]) -> Result<String> {
     Ok(string.to_owned())
 }
 
-/// PEM Decode
+/// PEM Decode (pem rfc7468)
 /// 
 /// Only 32-byte keypair are supported. Specifically X25519 and Ed25519.
 /// 
