@@ -1,7 +1,26 @@
-use crate::{Error, Result};
+use crate::{size::SIZE_32, Error, Result};
 use base64ct::{Base64, Encoding};
+use pem_rfc7468::LineEnding;
+
+type Label<'a> = &'a str;
 
 const BASE64_BUFFER_SIZE: usize = 1024;
+
+#[cfg(target_os = "macos")]
+const LINE_ENDING: LineEnding = pem_rfc7468::LineEnding::CR;
+
+#[cfg(target_os = "linux")]
+const LINE_ENDING: LineEnding = pem_rfc7468::LineEnding::LF;
+
+#[cfg(target_os = "windows")]
+const LINE_ENDING: LineEnding = pem_rfc7468::LineEnding::CRLF;
+
+
+pub const PEM_LABEL_PRIVATE_KEY: Label = "PRIVATE KEY";
+
+pub const PEM_LABEL_PUBLIC_KEY: Label = "PUBLIC KEY";
+
+
 
 /// Base64 Decode.
 ///
@@ -106,4 +125,57 @@ pub fn hex_encode(bytes: &[u8]) -> String {
     }
 
     String::from_utf8(buf).unwrap()
+}
+
+
+/// PEM Encode
+///
+/// Only 32-byte keypair are supported. Specifically X25519 and Ed25519.
+/// 
+/// # Example
+/// ```
+/// let (private_key,public_key) = xck::asymmetric::ed25519_gen_keypair();
+/// 
+/// let private_key_pem = xck::format::pem_encode(PEM_LABEL_PRIVATE_KEY,&private_key).unwrap();
+/// 
+/// let private_key_pem = xck::format::pem_encode(PEM_LABEL_PUBLIC_KEY,&private_key).unwrap();
+/// 
+/// println!("{private_key_pem}\n{public_key_pem}");
+/// ```
+pub fn pem_encode<'a>(label: Label<'a>, key: &[u8; SIZE_32]) -> Result<String> {
+    let mut buf: [u8; 1024] = [0u8; 1024];
+
+    let string = pem_rfc7468::encode(label, LINE_ENDING, key, &mut buf)
+        .map_err(|err| Error::new(err.to_string()))?;
+
+    Ok(string.to_owned())
+}
+
+/// PEM Decode
+/// 
+/// Only 32-byte keypair are supported. Specifically X25519 and Ed25519.
+/// 
+/// # Example
+/// ```
+/// let pem = "-----BEGIN PRIVATE KEY-----\rZ35L3PuHG0Vkkowk5Fzj6VA5jCus5LKedwT2IPe2+Rc=\r-----END PRIVATE KEY-----\r";
+/// 
+/// let decoded = xck::format::pem_decode(pem.as_bytes()).unwrap();
+/// 
+/// let label = decoded.0;
+/// 
+/// let key = decoded.1;
+/// 
+/// println!("Label: {}\nKey: {:?}",label,key);
+/// ```
+pub fn pem_decode(pem: &[u8]) -> Result<(Label, [u8; SIZE_32])> {
+    let mut buf: [u8; 1024] = [0u8; 1024];
+
+    let (label, bytes) =
+        pem_rfc7468::decode(pem, &mut buf).map_err(|err| Error::new(err.to_string()))?;
+
+    if bytes.len() != SIZE_32 {
+        Err(Error::new("".to_owned()))?
+    }
+
+    Ok((label, bytes.try_into().unwrap()))
 }
