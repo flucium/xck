@@ -8,10 +8,10 @@ It runs on many platforms and is intended to simplify and commonize the use(call
 ## Backend
 Use the following libraries as backend.
 
-- [Rust Crypto](https://github.com/RustCrypto/)<br>
+- Rust Crypto<br>
 <small>[https://github.com/RustCrypto/](https://github.com/RustCrypto/)</small>
 
-- [BLAKE3](https://github.com/BLAKE3-team/BLAKE3/)<br>
+- BLAKE3https://github.com/BLAKE3-team/BLAKE3/<br>
 <small>[https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)</small>
 
 # ...
