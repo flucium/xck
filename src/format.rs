@@ -34,10 +34,11 @@ pub const PEM_LABEL_PUBLIC_KEY: Label = "PUBLIC KEY";
 ///
 /// println!("{:?}",bytes);
 /// ```
-pub fn base64_decode(b64_string: &str) -> Result<Vec<u8>> {
+pub fn base64_decode(b64_string: impl Into<String>) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
-    let bytes = Base64::decode(b64_string, &mut buf)
+    
+    let bytes = Base64::decode(b64_string.into(), &mut buf)
         .map_err(|err| Error::new(err.to_string()))?
         .to_vec();
 

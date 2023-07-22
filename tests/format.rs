@@ -18,7 +18,7 @@ fn base64_decode() {
     const TEST_B64_STRING: &str = "aGVsbG8=";
 
     assert_eq!(
-        xck::format::base64_decode(&TEST_B64_STRING).unwrap(),
+        xck::format::base64_decode(TEST_B64_STRING).unwrap(),
         TEST_BYTES
     );
 }
