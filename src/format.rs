@@ -76,8 +76,10 @@ pub fn base64_encode(bytes: &[u8]) -> Result<String> {
 ///
 /// println!("{:?}",bytes);
 /// ```
-pub fn hex_decode(hex_string: &str) -> Vec<u8> {
-    let bytes = hex_string.as_bytes();
+pub fn hex_decode(hex_string: impl Into<String>) -> Vec<u8> {
+    let string = hex_string.into();
+    
+    let bytes = string.as_bytes();
 
     let len = bytes.len() / 2;
 
