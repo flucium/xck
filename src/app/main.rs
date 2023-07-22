@@ -4,17 +4,14 @@ use std::{
     // io::{self, stderr, stdout, Read, Write},
     io::{self, Read, Write},
     path::{Path, PathBuf},
-    str::FromStr,
 };
 
-use aead::KeyInit;
 use clap::{
     Args as ClapArgs,
     Parser as ClapParser,
     Subcommand as ClapSubcommand,
     // ValueEnum as ClapValueEnum,
 };
-use rand::RngCore;
 
 const NAME: &str = "XCK";
 
