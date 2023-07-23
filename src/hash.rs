@@ -94,3 +94,27 @@ pub fn sha512(bytes: &[u8]) -> [u8; SIZE_64] {
 pub fn sha256(bytes: &[u8]) -> [u8; SIZE_32] {
     Sha256::digest(bytes).into()
 }
+
+/// # WARNING
+/// This is in the development and even PHC-string is not supported.
+pub mod password_hash {
+    use crate::{
+        size::{SIZE_16, SIZE_32},
+        Error, Result,
+    };
+    // use argon2::{
+    //     password_hash::{PasswordHash, SaltString},
+    //     Argon2, Params as Argon2Params, PasswordHasher,
+    // };
+    use argon2::Argon2;
+
+    pub fn argon2id(password: &[u8], salt: &[u8; SIZE_16]) -> Result<[u8; SIZE_32]> {
+        let mut buf = [0u8; SIZE_32];
+
+        Argon2::default()
+            .hash_password_into(password, salt, &mut buf)
+            .map_err(|err| Error::new(err.to_string()))?;
+
+        Ok(buf)
+    }
+}
