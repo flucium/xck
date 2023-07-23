@@ -156,7 +156,7 @@ fn app() {
     let command = Command::parse();
     match command.subcommand {
         Subcommand::Hex(args) => {}
-        Subcommand::Base64(args) => todo!(),
+        Subcommand::Base64(args) => {}
         Subcommand::Random(args) => {}
         Subcommand::ChaCha20Poly1305(args) => todo!(),
         Subcommand::XChaCha20Poly1305(args) => todo!(),
@@ -200,6 +200,14 @@ fn arg_type_of(string: String) -> ArgType {
             _ => ArgType::Cli(b.to_string()),
         },
     }
+}
+
+fn stdout(buf: impl AsRef<[u8]>) {
+    let mut stdout = io::stdout().lock();
+
+    stdout.write_all(buf.as_ref()).unwrap();
+
+    stdout.flush().unwrap();
 }
 
 fn main() {

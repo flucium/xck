@@ -34,10 +34,11 @@ pub const PEM_LABEL_PUBLIC_KEY: Label = "PUBLIC KEY";
 ///
 /// println!("{:?}",bytes);
 /// ```
-pub fn base64_decode(b64_string: &str) -> Result<Vec<u8>> {
+pub fn base64_decode(b64_string: impl Into<String>) -> Result<Vec<u8>> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
-    let bytes = Base64::decode(b64_string, &mut buf)
+    
+    let bytes = Base64::decode(b64_string.into(), &mut buf)
         .map_err(|err| Error::new(err.to_string()))?
         .to_vec();
 
@@ -76,8 +77,10 @@ pub fn base64_encode(bytes: &[u8]) -> Result<String> {
 ///
 /// println!("{:?}",bytes);
 /// ```
-pub fn hex_decode(hex_string: &str) -> Vec<u8> {
-    let bytes = hex_string.as_bytes();
+pub fn hex_decode(hex_string: impl Into<String>) -> Vec<u8> {
+    let string = hex_string.into();
+    
+    let bytes = string.as_bytes();
 
     let len = bytes.len() / 2;
 
@@ -142,7 +145,7 @@ pub fn hex_encode(bytes: &[u8]) -> String {
 /// 
 /// println!("{private_key_pem}\n{public_key_pem}");
 /// ```
-pub fn pem_encod(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
+pub fn pem_encode(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
     let mut buf: [u8; 1024] = [0u8; 1024];
 
     let string = pem_rfc7468::encode(label, LINE_ENDING, key, &mut buf)
