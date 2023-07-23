@@ -102,11 +102,14 @@ pub mod password_hash {
         size::{SIZE_16, SIZE_32},
         Error, Result,
     };
-    // use argon2::{
-    //     password_hash::{PasswordHash, SaltString},
-    //     Argon2, Params as Argon2Params, PasswordHasher,
-    // };
-    use argon2::Argon2;
+
+    use argon2::{Algorithm, Argon2, Params, Version};
+
+    // pub fn argon2i()
+    // pub fn argon2i_with_secret()
+
+    // pub fn argon2d()
+    // pub fn argon2d_with_secret()
 
     pub fn argon2id(password: &[u8], salt: &[u8; SIZE_16]) -> Result<[u8; SIZE_32]> {
         let mut buf = [0u8; SIZE_32];
@@ -114,6 +117,25 @@ pub mod password_hash {
         Argon2::default()
             .hash_password_into(password, salt, &mut buf)
             .map_err(|err| Error::new(err.to_string()))?;
+        Ok(buf)
+    }
+
+    pub fn argon2id_with_secret(
+        secret: &[u8; SIZE_32],
+        password: &[u8],
+        salt: &[u8; SIZE_16],
+    ) -> Result<[u8; SIZE_32]> {
+        let mut buf = [0u8; SIZE_32];
+
+        Argon2::new_with_secret(
+            secret,
+            Algorithm::Argon2id,
+            Version::V0x13,
+            Params::default(),
+        )
+        .map_err(|err| Error::new(err.to_string()))?
+        .hash_password_into(password, salt, &mut buf)
+        .map_err(|err| Error::new(err.to_string()))?;
 
         Ok(buf)
     }
