@@ -145,7 +145,7 @@ pub fn hex_encode(bytes: &[u8]) -> String {
 /// 
 /// println!("{private_key_pem}\n{public_key_pem}");
 /// ```
-pub fn pem_encod(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
+pub fn pem_encode(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
     let mut buf: [u8; 1024] = [0u8; 1024];
 
     let string = pem_rfc7468::encode(label, LINE_ENDING, key, &mut buf)
