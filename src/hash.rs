@@ -2,11 +2,6 @@ use blake3::Hasher as Blake3;
 
 use sha2::{digest::Digest, Sha256, Sha512, Sha512_256};
 
-// argon2 re-export
-// pub use argon2::{
-//     Algorithm as Argon2Algorithm, Argon2, Params as Argon2Params, Version as Argon2Version,
-// };
-
 use crate::size::{SIZE_32, SIZE_64};
 
 /// BLAKE3 KDF default context.
@@ -38,7 +33,7 @@ pub fn blake3_kdf(context: &str, material: &[u8]) -> [u8; SIZE_32] {
     blake3::derive_key(context, material).into()
 }
 
-/// BLAKE3 Extend hash digest.
+/// BLAKE3 Extend.
 ///
 /// # Example
 /// ```
