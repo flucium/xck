@@ -1,5 +1,3 @@
-// use std::io;
-
 use blake3::Hasher as Blake3;
 
 use sha2::{digest::Digest, Sha256, Sha512, Sha512_256};
