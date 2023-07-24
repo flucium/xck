@@ -6,7 +6,7 @@ use crate::{
     Error, Result,
 };
 
-/// Ed25519 generate keypair.
+/// Ed25519 Gen Keypair.
 ///
 /// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
 ///
@@ -26,12 +26,18 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
+/// Ed25519 Gen public-key from private-key.
+pub fn ed25519_gen_public_key(private_key: &[u8; SIZE_32]) -> [u8; SIZE_32] {
+    ed25519_dalek::VerifyingKey::from(&ed25519_dalek::SigningKey::from_bytes(private_key))
+        .to_bytes()
+}
+
 /// Ed25519 Verifier.
 ///
 /// Enter your public_key, message, and signature.
-/// 
+///
 /// Result does not return an error if the authentication is successful. That is, `is_ok() == true`.
-/// 
+///
 /// # Example
 /// ```
 /// let public_key:[u8;32] = [
@@ -66,9 +72,9 @@ pub fn ed25519_verify(
 /// Ed25519 Signer.
 ///
 /// Enter your private_key and message.
-/// 
+///
 /// Signing with the correct keypair returns the signature. If it fails to sign with the wrong keypair, it returns an error message.
-/// 
+///
 /// # Example
 /// ```
 /// let private_key:[u8; 32] = [
@@ -90,10 +96,10 @@ pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; 
     Ok(signature.to_bytes())
 }
 
-/// X25519
+/// X25519 Gen Keypair
 ///
 /// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
-/// 
+///
 /// # Example
 /// ```
 /// let (private_key,public_key) = xck::asymmetric::x25519_gen_keypair();
@@ -110,10 +116,16 @@ pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
+/// X25518 Gen public-key from private-key.
+pub fn x25519_gen_public_key(private_key: &[u8; SIZE_32]) -> [u8; SIZE_32] {
+    x25519_dalek::PublicKey::from(&x25519_dalek::StaticSecret::from(private_key.to_owned()))
+        .to_bytes()
+}
+
 /// X25519 Diffie Hellman
 ///
 /// You can obtain the same symmetric key with your private_key and the other their_public_key.
-/// 
+///
 /// # Example
 /// ```
 /// let alice_private_key: [u8; 32] = [
