@@ -111,3 +111,81 @@ pub fn gen_16() -> [u8; SIZE_16] {
 pub fn gen_12() -> [u8; SIZE_12] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
+
+
+/// ChaCha20Rng
+///
+/// Generate a 32-byte random bytes, within ascii code range.
+pub fn generate_ascii() -> [u8; SIZE_32] {
+   gen_32_ascii()
+}
+
+
+/// ChaCha20Rng
+///
+/// Generate a 64-byte random bytes, within ascii code range.
+pub fn gen_64_ascii() -> [u8; SIZE_64] {
+    let mut buf = [0u8; SIZE_64];
+
+    for i in 0..SIZE_64 {
+        buf[i] = gen_range_ascii();
+    }
+
+    buf
+}
+
+/// ChaCha20Rng
+///
+/// Generate a 32-byte random bytes, within ascii code range.
+pub fn gen_32_ascii() -> [u8; SIZE_32] {
+    let mut buf = [0u8; SIZE_32];
+
+    for i in 0..SIZE_32 {
+        buf[i] = gen_range_ascii();
+    }
+
+    buf
+}
+
+/// ChaCha20Rng
+///
+/// Generate a 24-byte random bytes, within ascii code range.
+pub fn gen_24_ascii() -> [u8; SIZE_24] {
+    let mut buf = [0u8; SIZE_24];
+
+    for i in 0..SIZE_24 {
+        buf[i] = gen_range_ascii();
+    }
+
+    buf
+}
+
+/// ChaCha20Rng
+///
+/// Generate a 16-byte random bytes, within ascii code range.
+pub fn gen_16_ascii() -> [u8; SIZE_16] {
+    let mut buf = [0u8; SIZE_16];
+
+    for i in 0..SIZE_16 {
+        buf[i] = gen_range_ascii();
+    }
+
+    buf
+}
+
+/// ChaCha20Rng
+///
+/// Generate a 12-byte random bytes, within ascii code range.
+pub fn gen_12_ascii() -> [u8; SIZE_12] {
+    let mut buf = [0u8; SIZE_12];
+
+    for i in 0..SIZE_12 {
+        buf[i] = gen_range_ascii();
+    }
+
+    buf
+}
+
+fn gen_range_ascii() -> u8 {
+    rand_chacha::ChaCha20Rng::from_entropy().gen_range(32..126)
+}
