@@ -5,6 +5,8 @@ use std::{
 };
 
 use clap::{Args, Parser, Subcommand};
+use rand::{Rng, SeedableRng};
+use xck::rand::gen_12;
 
 const NAME: &str = "XCK";
 
@@ -36,6 +38,10 @@ enum AppSubcommand {
     /// X25519 is ...
     #[command(name = "x25519")]
     X21159(X25519Args),
+
+    #[command(name = "chacha20-poly1305")]
+    #[clap(alias = "chacha20poly1305")]
+    ChaCha20Poly1305(ChaCha20Poly1305Args),
 }
 
 #[derive(Args)]
@@ -146,6 +152,33 @@ struct X21159DiffieHellmanArgs {
     public_key: String,
 }
 
+#[derive(Args)]
+struct ChaCha20Poly1305Args {
+    /// encrypt is...
+    #[arg(long = "encrypt", short = 'e')]
+    #[clap(alias = "enc")]
+    encrypt: bool,
+
+    /// decrypt is...
+    #[arg(long = "decrypt", short = 'd')]
+    #[clap(alias = "dec")]
+    decrypt: bool,
+
+    /// key is...
+    #[arg(long = "key", short = 'k')]
+    key: String,
+
+    /// aad is...
+    #[arg(long = "additionaldata", short = 'a')]
+    #[clap(alias = "aad")]
+    additionaldata: String,
+
+    /// message is...
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
 fn read_arg(string: String) -> io::Result<Vec<u8>> {
     let bytes = match arg_type_of(string) {
         ArgType::Cli(string) => string.as_bytes().to_owned(),
@@ -194,7 +227,23 @@ fn main() {
     let command = AppCommand::parse();
 
     match command.subcommand {
-        AppSubcommand::Random(args) => {}
+        AppSubcommand::Random(args) => {
+            const LEN_MIN: u32 = 1;
+
+            const LEN_MAX: u32 = 32;
+
+            if args.length < LEN_MIN || args.length > LEN_MAX {
+                panic!("ToDo");
+            }
+
+            let bytes = xck::rand::generate()
+                .get(0..args.length as usize)
+                .unwrap()
+                .to_vec();
+
+            stdout(bytes);
+        }
+
         AppSubcommand::Ed25519(args) => match args.subcommand {
             Ed25519SubCommand::Sign(args) => {
                 let pem_encoded = read_arg(args.private_key).expect("ToDo");
@@ -275,6 +324,7 @@ fn main() {
                 stdout(pem_encoded);
             }
         },
+
         AppSubcommand::X21159(args) => match args.subcommand {
             X25519SubCommand::DiffiHellman(args) => {
                 let pem_encoded = read_arg(args.private_key).expect("ToDo");
@@ -297,7 +347,7 @@ fn main() {
 
                 // Format ToDo...
                 let b64_encoded_string = xck::format::base64_encode(&shared_key).expect("ToDo");
-                
+
                 stdout(b64_encoded_string);
             }
 
@@ -329,5 +379,7 @@ fn main() {
                 stdout(pem_encoded);
             }
         },
+
+        AppSubcommand::ChaCha20Poly1305(args) => todo!(),
     }
 }
