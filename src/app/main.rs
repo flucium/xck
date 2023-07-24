@@ -1,17 +1,12 @@
 use std::{
-    self,
-    fs,
-    // io::{self, stderr, stdout, Read, Write},
+    self, fs,
     io::{self, Read, Write},
     path::{Path, PathBuf},
 };
 
-use clap::{
-    Args as ClapArgs,
-    Parser as ClapParser,
-    Subcommand as ClapSubcommand,
-    // ValueEnum as ClapValueEnum,
-};
+use clap::{Args, Parser, Subcommand};
+use rand::{Rng, SeedableRng};
+use xck::rand::gen_12;
 
 const NAME: &str = "XCK";
 
@@ -21,78 +16,143 @@ const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
 
-const RANDOM_MAX_SIZE: usize = 32;
-const RANDOM_MIN_SIZE: usize = 1;
-
-#[derive(ClapParser)]
+#[derive(Parser)]
 #[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
 #[clap(disable_help_subcommand(true))]
-struct Command {
+struct AppCommand {
     #[command(subcommand)]
-    subcommand: Subcommand,
+    subcommand: AppSubcommand,
 }
 
-#[derive(ClapSubcommand)]
-enum Subcommand {
-    /// hex is...
-    #[command(name = "hex")]
-    Hex(HexArgs),
-
-    /// base64 is...    
-    #[command(name = "base64")]
-    Base64(Base64Args),
-
+#[derive(Subcommand)]
+enum AppSubcommand {
     /// random is...
     #[command(name = "random")]
     #[clap(alias = "rand")]
     Random(RandomArgs),
 
-    /// chacha20poly1305 is...
-    #[command(name = "chacha20poly1305")]
+    /// Ed25519 is...
+    #[command(name = "ed25519")]
+    Ed25519(Ed25519Args),
+
+    /// X25519 is ...
+    #[command(name = "x25519")]
+    X21159(X25519Args),
+
+    #[command(name = "chacha20-poly1305")]
+    #[clap(alias = "chacha20poly1305")]
     ChaCha20Poly1305(ChaCha20Poly1305Args),
-
-    /// xchacha20poly1305 is...
-    #[command(name = "xchacha20poly1305")]
-    XChaCha20Poly1305(XChaCha20Poly1305Args),
 }
 
-#[derive(ClapArgs)]
-struct HexArgs {
-    /// encode is...
-    #[arg(long = "encode", short = 'e')]
-    #[clap(alias = "enc")]
-    encode: bool,
-
-    /// decode is...
-    #[arg(long = "decode", short = 'd')]
-    #[clap(alias = "dec")]
-    decode: bool,
-
-    /// input is...
-    #[arg(long = "input", short = 'i')]
-    #[clap(alias = "in")]
-    input: String,
+#[derive(Args)]
+struct RandomArgs {
+    #[arg(long = "length", short = 'l', default_value = "32")]
+    length: u32,
 }
 
-#[derive(ClapArgs)]
-struct Base64Args {
-    /// encode is...
-    #[arg(long = "encode", short = 'e')]
-    #[clap(alias = "enc")]
-    encode: bool,
-
-    /// decode is...
-    #[arg(long = "decode", short = 'd')]
-    #[clap(alias = "dec")]
-    decode: bool,
-
-    /// input is...
-    #[arg(long = "input", short = 'i')]
-    #[clap(alias = "in")]
-    input: String,
+#[derive(Parser)]
+struct Ed25519Args {
+    #[command(subcommand)]
+    subcommand: Ed25519SubCommand,
 }
 
-#[derive(ClapArgs)]
+#[derive(Subcommand)]
+enum Ed25519SubCommand {
+    #[command(name = "sign")]
+    Sign(Ed25519SignArgs),
+
+    #[command(name = "verify")]
+    Verify(Ed25519VerifyArgs),
+
+    #[command(name = "gen-private-key")]
+    #[clap(alias = "gen-privatekey")]
+    Ed25519GenPrivateKey(Ed25519GenPrivateKeyArgs),
+
+    #[command(name = "gen-public-key")]
+    #[clap(alias = "gen-publickey")]
+    Ed25519GenPublicKey(Ed25519GenPublicKeyArgs),
+}
+
+#[derive(Args)]
+struct Ed25519SignArgs {
+    #[arg(long = "private-key", short = 'k')]
+    #[clap(alias = "privatekey")]
+    private_key: String,
+
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
+#[derive(Args)]
+struct Ed25519VerifyArgs {
+    #[arg(long = "public-key", short = 'k')]
+    #[clap(alias = "publickey")]
+    public_key: String,
+
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+
+    #[arg(long = "signature", short = 's')]
+    #[clap(alias = "sign")]
+    signature: String,
+}
+
+#[derive(Args)]
+struct Ed25519GenPrivateKeyArgs;
+
+#[derive(Args)]
+struct Ed25519GenPublicKeyArgs {
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
+    private_key: String,
+}
+
+#[derive(Parser)]
+struct X25519Args {
+    #[command(subcommand)]
+    subcommand: X25519SubCommand,
+}
+
+#[derive(Subcommand)]
+enum X25519SubCommand {
+    #[command(name = "diffie-hellman")]
+    #[clap(alias = "dh")]
+    #[clap(alias = "keyexchange")]
+    DiffiHellman(X21159DiffieHellmanArgs),
+
+    #[command(name = "gen-private-key")]
+    #[clap(alias = "gen-privatekey")]
+    X25519GenPrivateKey(X25519GenPrivateKeyArgs),
+
+    #[command(name = "gen-public-key")]
+    #[clap(alias = "gen-publickey")]
+    X25519GenPublicKey(X25519GenPublicKeyArgs),
+}
+
+#[derive(Args)]
+struct X25519GenPrivateKeyArgs;
+
+#[derive(Args)]
+struct X25519GenPublicKeyArgs {
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
+    private_key: String,
+}
+
+#[derive(Args)]
+struct X21159DiffieHellmanArgs {
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
+    private_key: String,
+
+    #[arg(long = "public-key")]
+    #[clap(alias = "publickey")]
+    public_key: String,
+}
+
+#[derive(Args)]
 struct ChaCha20Poly1305Args {
     /// encrypt is...
     #[arg(long = "encrypt", short = 'e')]
@@ -117,50 +177,6 @@ struct ChaCha20Poly1305Args {
     #[arg(long = "message", short = 'm')]
     #[clap(alias = "msg")]
     message: String,
-}
-
-#[derive(ClapArgs)]
-struct XChaCha20Poly1305Args {
-    /// encrypt is...
-    #[arg(long = "encrypt", short = 'e')]
-    #[clap(alias = "enc")]
-    encrypt: bool,
-
-    /// decrypt is...
-    #[arg(long = "decrypt", short = 'd')]
-    #[clap(alias = "dec")]
-    decrypt: bool,
-
-    /// key is...
-    #[arg(long = "key", short = 'k')]
-    key: String,
-
-    /// aad is...
-    #[arg(long = "additionaldata", short = 'a')]
-    #[clap(alias = "aad")]
-    additionaldata: String,
-
-    /// message is...
-    #[arg(long = "message", short = 'm')]
-    #[clap(alias = "msg")]
-    message: String,
-}
-
-#[derive(ClapArgs)]
-struct RandomArgs {
-    #[arg(long = "size", short = 's', default_value = "32")]
-    size: usize,
-}
-
-fn app() {
-    let command = Command::parse();
-    match command.subcommand {
-        Subcommand::Hex(args) => {}
-        Subcommand::Base64(args) => {}
-        Subcommand::Random(args) => {}
-        Subcommand::ChaCha20Poly1305(args) => todo!(),
-        Subcommand::XChaCha20Poly1305(args) => todo!(),
-    }
 }
 
 fn read_arg(string: String) -> io::Result<Vec<u8>> {
@@ -188,9 +204,6 @@ enum ArgType {
     File(PathBuf),
 }
 
-// file:testfile.txt -> file
-// cli:hello_world -> cli
-// hello_world -> cli
 fn arg_type_of(string: String) -> ArgType {
     match string.split_once(':') {
         None => ArgType::Cli(string),
@@ -211,5 +224,162 @@ fn stdout(buf: impl AsRef<[u8]>) {
 }
 
 fn main() {
-    app()
+    let command = AppCommand::parse();
+
+    match command.subcommand {
+        AppSubcommand::Random(args) => {
+            const LEN_MIN: u32 = 1;
+
+            const LEN_MAX: u32 = 32;
+
+            if args.length < LEN_MIN || args.length > LEN_MAX {
+                panic!("ToDo");
+            }
+
+            let bytes = xck::rand::generate()
+                .get(0..args.length as usize)
+                .unwrap()
+                .to_vec();
+
+            stdout(bytes);
+        }
+
+        AppSubcommand::Ed25519(args) => match args.subcommand {
+            Ed25519SubCommand::Sign(args) => {
+                let pem_encoded = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let message = read_arg(args.message).expect("ToDo");
+
+                // Format ToDo...
+                let signature =
+                    xck::asymmetric::ed25519_sign(&private_key, &message).expect("ToDo");
+
+                let encoded = xck::format::base64_encode(&signature).expect("ToDo");
+
+                stdout(encoded);
+            }
+
+            Ed25519SubCommand::Verify(args) => {
+                let message = read_arg(args.message).expect("ToDo");
+
+                let encoded_signature = read_arg(args.signature).expect("ToDo");
+
+                // Format ToDo...
+                let bytes = xck::format::base64_decode(
+                    String::from_utf8(encoded_signature).unwrap_or_default(),
+                )
+                .expect("ToDo");
+
+                let signature: [u8; 64] = match bytes.try_into() {
+                    Err(_) => panic!("ToDo"),
+                    Ok(bytes) => bytes,
+                };
+
+                let pem_encoded = read_arg(args.public_key).expect("ToDo");
+
+                let (label, public_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+                    panic!("ToDo");
+                }
+
+                stdout(
+                    xck::asymmetric::ed25519_verify(&public_key, &message, &signature)
+                        .is_ok()
+                        .to_string(),
+                );
+            }
+
+            Ed25519SubCommand::Ed25519GenPrivateKey(_) => {
+                let private_key = xck::asymmetric::ed25519_gen_private_key();
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
+                        .unwrap();
+
+                stdout(pem_encoded);
+            }
+
+            Ed25519SubCommand::Ed25519GenPublicKey(args) => {
+                let bytes = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&bytes).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
+        },
+
+        AppSubcommand::X21159(args) => match args.subcommand {
+            X25519SubCommand::DiffiHellman(args) => {
+                let pem_encoded = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let pem_encoded = read_arg(args.public_key).expect("ToDo");
+
+                let (label, public_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+                    panic!("ToDo");
+                }
+
+                let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
+
+                // Format ToDo...
+                let b64_encoded_string = xck::format::base64_encode(&shared_key).expect("ToDo");
+
+                stdout(b64_encoded_string);
+            }
+
+            X25519SubCommand::X25519GenPrivateKey(_) => {
+                let private_key = xck::asymmetric::x25519_gen_private_key();
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
+
+            X25519SubCommand::X25519GenPublicKey(args) => {
+                let bytes = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&bytes).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
+        },
+
+        AppSubcommand::ChaCha20Poly1305(args) => todo!(),
+    }
 }

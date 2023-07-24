@@ -7,7 +7,8 @@ pub mod symmetric;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+
+#[derive(Debug,Clone)]
 // pub struct Error {
 //     message: String,
 // }
