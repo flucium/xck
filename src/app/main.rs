@@ -1,17 +1,10 @@
 use std::{
-    self,
-    fs,
-    // io::{self, stderr, stdout, Read, Write},
+    self, fs,
     io::{self, Read, Write},
     path::{Path, PathBuf},
 };
 
-use clap::{
-    Args as ClapArgs,
-    Parser as ClapParser,
-    Subcommand as ClapSubcommand,
-    // ValueEnum as ClapValueEnum,
-};
+use clap::{Args, Parser, Subcommand};
 
 const NAME: &str = "XCK";
 
@@ -21,45 +14,43 @@ const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
 
-#[derive(ClapParser)]
+#[derive(Parser)]
 #[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
 #[clap(disable_help_subcommand(true))]
-struct Command {
+struct AppCommand {
     #[command(subcommand)]
-    subcommand: Subcommand,
+    subcommand: AppSubcommand,
 }
 
-#[derive(ClapSubcommand)]
-enum Subcommand {
+#[derive(Subcommand)]
+enum AppSubcommand {
     /// random is...
     #[command(name = "random")]
     #[clap(alias = "rand")]
     Random(RandomArgs),
 
+    /// Ed25519 is...
     #[command(name = "ed25519")]
     Ed25519(Ed25519Args),
 
+    /// X25519 is ...
     #[command(name = "x25519")]
     X21159(X25519Args),
 }
 
-// trait CommandArgs<T> {
-//     fn work(&self) -> T;
-// }
-
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct RandomArgs {
     #[arg(long = "length", short = 'l', default_value = "32")]
     length: u32,
 }
 
-#[derive(ClapParser)]
+#[derive(Parser)]
 struct Ed25519Args {
     #[command(subcommand)]
     subcommand: Ed25519SubCommand,
 }
 
-#[derive(ClapSubcommand)]
+#[derive(Subcommand)]
 enum Ed25519SubCommand {
     #[command(name = "sign")]
     Sign(Ed25519SignArgs),
@@ -76,7 +67,7 @@ enum Ed25519SubCommand {
     Ed25519GenPublicKey(Ed25519GenPublicKeyArgs),
 }
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct Ed25519SignArgs {
     #[arg(long = "private-key", short = 'k')]
     #[clap(alias = "privatekey")]
@@ -87,11 +78,11 @@ struct Ed25519SignArgs {
     message: String,
 }
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct Ed25519VerifyArgs {
     #[arg(long = "public-key", short = 'k')]
     #[clap(alias = "publickey")]
-    private_key: String,
+    public_key: String,
 
     #[arg(long = "message", short = 'm')]
     #[clap(alias = "msg")]
@@ -102,23 +93,23 @@ struct Ed25519VerifyArgs {
     signature: String,
 }
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct Ed25519GenPrivateKeyArgs;
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct Ed25519GenPublicKeyArgs {
-    #[arg(long = "public-key")]
-    #[clap(alias = "publickey")]
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
     private_key: String,
 }
 
-#[derive(ClapParser)]
+#[derive(Parser)]
 struct X25519Args {
     #[command(subcommand)]
     subcommand: X25519SubCommand,
 }
 
-#[derive(ClapSubcommand)]
+#[derive(Subcommand)]
 enum X25519SubCommand {
     #[command(name = "diffie-hellman")]
     #[clap(alias = "dh")]
@@ -134,20 +125,20 @@ enum X25519SubCommand {
     X25519GenPublicKey(X25519GenPublicKeyArgs),
 }
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct X25519GenPrivateKeyArgs;
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct X25519GenPublicKeyArgs {
-    #[arg(long = "public-key")]
-    #[clap(alias = "publickey")]
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
     private_key: String,
 }
 
-#[derive(ClapArgs)]
+#[derive(Args)]
 struct X21159DiffieHellmanArgs {
-    #[arg(long = "public-key")]
-    #[clap(alias = "publickey")]
+    #[arg(long = "private-key")]
+    #[clap(alias = "privatekey")]
     private_key: String,
 
     #[arg(long = "public-key")]
@@ -200,17 +191,91 @@ fn stdout(buf: impl AsRef<[u8]>) {
 }
 
 fn main() {
-    let command = Command::parse();
+    let command = AppCommand::parse();
 
     match command.subcommand {
-        Subcommand::Random(args) => {}
-        Subcommand::Ed25519(args) => match args.subcommand {
-            Ed25519SubCommand::Sign(_) => todo!(),
-            Ed25519SubCommand::Verify(_) => todo!(),
-            Ed25519SubCommand::Ed25519GenPrivateKey(_) => todo!(),
-            Ed25519SubCommand::Ed25519GenPublicKey(_) => todo!(),
+        AppSubcommand::Random(args) => {}
+        AppSubcommand::Ed25519(args) => match args.subcommand {
+            Ed25519SubCommand::Sign(args) => {
+                let pem_encoded = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let message = read_arg(args.message).expect("ToDo");
+
+                // Format ToDo...
+                let signature =
+                    xck::asymmetric::ed25519_sign(&private_key, &message).expect("ToDo");
+            
+                let encoded = xck::format::base64_encode(&signature).expect("ToDo");
+            
+                stdout(encoded);
+            }
+
+            Ed25519SubCommand::Verify(args) => {
+                let message = read_arg(args.message).expect("ToDo");
+
+                let encoded_signature = read_arg(args.signature).expect("ToDo");
+
+                // Format ToDo...
+                let bytes = xck::format::base64_decode(
+                    String::from_utf8(encoded_signature).unwrap_or_default(),
+                )
+                .expect("ToDo");
+
+                let signature: [u8; 64] = match bytes.try_into() {
+                    Err(_) => panic!("ToDo"),
+                    Ok(bytes) => bytes,
+                };
+
+                let pem_encoded = read_arg(args.public_key).expect("ToDo");
+
+                let (label, public_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+                    panic!("ToDo");
+                }
+
+                stdout(
+                    xck::asymmetric::ed25519_verify(&public_key, &message, &signature)
+                        .is_ok()
+                        .to_string(),
+                );
+            }
+            
+            Ed25519SubCommand::Ed25519GenPrivateKey(_) => {
+                let private_key = xck::asymmetric::ed25519_gen_private_key();
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
+                        .unwrap();
+
+                stdout(pem_encoded);
+            }
+
+            Ed25519SubCommand::Ed25519GenPublicKey(args) => {
+                let bytes = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&bytes).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
         },
-        Subcommand::X21159(args) => match args.subcommand {
+        AppSubcommand::X21159(args) => match args.subcommand {
             X25519SubCommand::DiffiHellman {} => todo!(),
             X25519SubCommand::X25519GenPrivateKey(_) => todo!(),
             X25519SubCommand::X25519GenPublicKey(_) => todo!(),
