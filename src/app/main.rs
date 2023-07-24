@@ -5,8 +5,6 @@ use std::{
 };
 
 use clap::{Args, Parser, Subcommand};
-use rand::{Rng, SeedableRng};
-use xck::rand::gen_12;
 
 const NAME: &str = "XCK";
 
@@ -236,7 +234,7 @@ fn main() {
                 panic!("ToDo");
             }
 
-            let bytes = xck::rand::generate()
+            let bytes = xck::rand::generate_ascii()
                 .get(0..args.length as usize)
                 .unwrap()
                 .to_vec();
