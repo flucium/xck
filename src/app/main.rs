@@ -21,9 +21,6 @@ const AUTHOR: &str = "flucium";
 
 const ABOUT: &str = "";
 
-const RANDOM_MAX_SIZE: usize = 32;
-const RANDOM_MIN_SIZE: usize = 1;
-
 #[derive(ClapParser)]
 #[command(name = NAME, version = VERSION, author = AUTHOR, about = ABOUT)]
 #[clap(disable_help_subcommand(true))]
@@ -34,133 +31,128 @@ struct Command {
 
 #[derive(ClapSubcommand)]
 enum Subcommand {
-    /// hex is...
-    #[command(name = "hex")]
-    Hex(HexArgs),
-
-    /// base64 is...    
-    #[command(name = "base64")]
-    Base64(Base64Args),
-
     /// random is...
     #[command(name = "random")]
     #[clap(alias = "rand")]
     Random(RandomArgs),
 
-    /// chacha20poly1305 is...
-    #[command(name = "chacha20poly1305")]
-    ChaCha20Poly1305(ChaCha20Poly1305Args),
+    #[command(name = "ed25519")]
+    Ed25519(Ed25519Args),
 
-    /// xchacha20poly1305 is...
-    #[command(name = "xchacha20poly1305")]
-    XChaCha20Poly1305(XChaCha20Poly1305Args),
+    #[command(name = "x25519")]
+    X21159(X25519Args),
 }
 
-#[derive(ClapArgs)]
-struct HexArgs {
-    /// encode is...
-    #[arg(long = "encode", short = 'e')]
-    #[clap(alias = "enc")]
-    encode: bool,
-
-    /// decode is...
-    #[arg(long = "decode", short = 'd')]
-    #[clap(alias = "dec")]
-    decode: bool,
-
-    /// input is...
-    #[arg(long = "input", short = 'i')]
-    #[clap(alias = "in")]
-    input: String,
-}
-
-#[derive(ClapArgs)]
-struct Base64Args {
-    /// encode is...
-    #[arg(long = "encode", short = 'e')]
-    #[clap(alias = "enc")]
-    encode: bool,
-
-    /// decode is...
-    #[arg(long = "decode", short = 'd')]
-    #[clap(alias = "dec")]
-    decode: bool,
-
-    /// input is...
-    #[arg(long = "input", short = 'i')]
-    #[clap(alias = "in")]
-    input: String,
-}
-
-#[derive(ClapArgs)]
-struct ChaCha20Poly1305Args {
-    /// encrypt is...
-    #[arg(long = "encrypt", short = 'e')]
-    #[clap(alias = "enc")]
-    encrypt: bool,
-
-    /// decrypt is...
-    #[arg(long = "decrypt", short = 'd')]
-    #[clap(alias = "dec")]
-    decrypt: bool,
-
-    /// key is...
-    #[arg(long = "key", short = 'k')]
-    key: String,
-
-    /// aad is...
-    #[arg(long = "additionaldata", short = 'a')]
-    #[clap(alias = "aad")]
-    additionaldata: String,
-
-    /// message is...
-    #[arg(long = "message", short = 'm')]
-    #[clap(alias = "msg")]
-    message: String,
-}
-
-#[derive(ClapArgs)]
-struct XChaCha20Poly1305Args {
-    /// encrypt is...
-    #[arg(long = "encrypt", short = 'e')]
-    #[clap(alias = "enc")]
-    encrypt: bool,
-
-    /// decrypt is...
-    #[arg(long = "decrypt", short = 'd')]
-    #[clap(alias = "dec")]
-    decrypt: bool,
-
-    /// key is...
-    #[arg(long = "key", short = 'k')]
-    key: String,
-
-    /// aad is...
-    #[arg(long = "additionaldata", short = 'a')]
-    #[clap(alias = "aad")]
-    additionaldata: String,
-
-    /// message is...
-    #[arg(long = "message", short = 'm')]
-    #[clap(alias = "msg")]
-    message: String,
-}
+// trait CommandArgs<T> {
+//     fn work(&self) -> T;
+// }
 
 #[derive(ClapArgs)]
 struct RandomArgs {
-    #[arg(long = "size", short = 's', default_value = "32")]
-    size: usize,
+    #[arg(long = "length", short = 'l', default_value = "32")]
+    length: u32,
 }
 
-fn app() {
-    let command = Command::parse();
-    match command.subcommand {
-        Subcommand::Hex(args) => {}
-        Subcommand::Base64(args) => {}
-        Subcommand::Random(args) => {}
-        Subcommand::ChaCha20Poly1305(args) => todo!(),
-        Subcommand::XChaCha20Poly1305(args) => todo!(),
-    }
+#[derive(ClapParser)]
+struct Ed25519Args {
+    #[command(subcommand)]
+    subcommand: Ed25519SubCommand,
+}
+
+#[derive(ClapSubcommand)]
+enum Ed25519SubCommand {
+    #[command(name = "sign")]
+    Sign(Ed25519SignArgs),
+
+    #[command(name = "verify")]
+    Verify(Ed25519VerifyArgs),
+
+    #[command(name = "gen-private-key")]
+    #[clap(alias = "gen-privatekey")]
+    Ed25519GenPrivateKey(Ed25519GenPrivateKeyArgs),
+
+    #[command(name = "gen-public-key")]
+    #[clap(alias = "gen-publickey")]
+    Ed25519GenPublicKey(Ed25519GenPublicKeyArgs),
+}
+
+#[derive(ClapArgs)]
+struct Ed25519SignArgs {
+    #[arg(long = "private-key", short = 'k')]
+    #[clap(alias = "privatekey")]
+    private_key: String,
+
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
+#[derive(ClapArgs)]
+struct Ed25519VerifyArgs {
+    #[arg(long = "public-key", short = 'k')]
+    #[clap(alias = "publickey")]
+    private_key: String,
+
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+
+    #[arg(long = "signature", short = 's')]
+    #[clap(alias = "sign")]
+    signature: String,
+}
+
+#[derive(ClapArgs)]
+struct Ed25519GenPrivateKeyArgs;
+
+#[derive(ClapArgs)]
+struct Ed25519GenPublicKeyArgs {
+    #[arg(long = "public-key")]
+    #[clap(alias = "publickey")]
+    private_key: String,
+}
+
+#[derive(ClapParser)]
+struct X25519Args {
+    #[command(subcommand)]
+    subcommand: X25519SubCommand,
+}
+
+#[derive(ClapSubcommand)]
+enum X25519SubCommand {
+    #[command(name = "diffie-hellman")]
+    #[clap(alias = "dh")]
+    #[clap(alias = "keyexchange")]
+    DiffiHellman {},
+
+    #[command(name = "gen-private-key")]
+    #[clap(alias = "gen-privatekey")]
+    X25519GenPrivateKey(X25519GenPrivateKeyArgs),
+
+    #[command(name = "gen-public-key")]
+    #[clap(alias = "gen-publickey")]
+    X25519GenPublicKey(X25519GenPublicKeyArgs),
+}
+
+#[derive(ClapArgs)]
+struct X25519GenPrivateKeyArgs;
+
+#[derive(ClapArgs)]
+struct X25519GenPublicKeyArgs {
+    #[arg(long = "public-key")]
+    #[clap(alias = "publickey")]
+    private_key: String,
+}
+
+#[derive(ClapArgs)]
+struct X21159DiffieHellmanArgs {
+    #[arg(long = "public-key")]
+    #[clap(alias = "publickey")]
+    private_key: String,
+
+    #[arg(long = "public-key")]
+    #[clap(alias = "publickey")]
+    public_key: String,
 }
 
 fn read_arg(string: String) -> io::Result<Vec<u8>> {
@@ -188,9 +180,6 @@ enum ArgType {
     File(PathBuf),
 }
 
-// file:testfile.txt -> file
-// cli:hello_world -> cli
-// hello_world -> cli
 fn arg_type_of(string: String) -> ArgType {
     match string.split_once(':') {
         None => ArgType::Cli(string),
@@ -211,5 +200,20 @@ fn stdout(buf: impl AsRef<[u8]>) {
 }
 
 fn main() {
-    app()
+    let command = Command::parse();
+
+    match command.subcommand {
+        Subcommand::Random(args) => {}
+        Subcommand::Ed25519(args) => match args.subcommand {
+            Ed25519SubCommand::Sign(_) => todo!(),
+            Ed25519SubCommand::Verify(_) => todo!(),
+            Ed25519SubCommand::Ed25519GenPrivateKey(_) => todo!(),
+            Ed25519SubCommand::Ed25519GenPublicKey(_) => todo!(),
+        },
+        Subcommand::X21159(args) => match args.subcommand {
+            X25519SubCommand::DiffiHellman {} => todo!(),
+            X25519SubCommand::X25519GenPrivateKey(_) => todo!(),
+            X25519SubCommand::X25519GenPublicKey(_) => todo!(),
+        },
+    }
 }
