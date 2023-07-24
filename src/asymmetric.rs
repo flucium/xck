@@ -26,6 +26,10 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
+/// Ed25519 Gemerate private-key.
+pub fn ed25519_gen_private_key() -> [u8; SIZE_32] {
+    ed25519_dalek::SigningKey::generate(&mut Rand).to_bytes()
+}
 
 /// Ed25519 Generate public-key from private-key.
 pub fn ed25519_gen_public_key(private_key: &[u8; SIZE_32]) -> [u8; SIZE_32] {
@@ -115,6 +119,11 @@ pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     let private_key = static_secret.to_bytes();
 
     (private_key, public_key)
+}
+
+/// X21159 Generate private-key.
+pub fn x25519_gen_private_key() -> [u8; SIZE_32] {
+    x25519_dalek::StaticSecret::random_from_rng(&mut Rand).to_bytes()
 }
 
 /// X25519 Generate public-key from private-key.
