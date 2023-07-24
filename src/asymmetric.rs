@@ -6,7 +6,7 @@ use crate::{
     Error, Result,
 };
 
-/// Ed25519 Gen Keypair.
+/// Ed25519 Generate Keypair.
 ///
 /// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
 ///
@@ -26,7 +26,8 @@ pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
-/// Ed25519 Gen public-key from private-key.
+
+/// Ed25519 Generate public-key from private-key.
 pub fn ed25519_gen_public_key(private_key: &[u8; SIZE_32]) -> [u8; SIZE_32] {
     ed25519_dalek::VerifyingKey::from(&ed25519_dalek::SigningKey::from_bytes(private_key))
         .to_bytes()
@@ -96,7 +97,7 @@ pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; 
     Ok(signature.to_bytes())
 }
 
-/// X25519 Gen Keypair
+/// X25519 Generate Keypair
 ///
 /// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
 ///
@@ -116,7 +117,7 @@ pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
     (private_key, public_key)
 }
 
-/// X25518 Gen public-key from private-key.
+/// X25519 Generate public-key from private-key.
 pub fn x25519_gen_public_key(private_key: &[u8; SIZE_32]) -> [u8; SIZE_32] {
     x25519_dalek::PublicKey::from(&x25519_dalek::StaticSecret::from(private_key.to_owned()))
         .to_bytes()
