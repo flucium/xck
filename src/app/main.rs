@@ -114,7 +114,7 @@ enum X25519SubCommand {
     #[command(name = "diffie-hellman")]
     #[clap(alias = "dh")]
     #[clap(alias = "keyexchange")]
-    DiffiHellman {},
+    DiffiHellman(X21159DiffieHellmanArgs),
 
     #[command(name = "gen-private-key")]
     #[clap(alias = "gen-privatekey")]
@@ -210,9 +210,9 @@ fn main() {
                 // Format ToDo...
                 let signature =
                     xck::asymmetric::ed25519_sign(&private_key, &message).expect("ToDo");
-            
+
                 let encoded = xck::format::base64_encode(&signature).expect("ToDo");
-            
+
                 stdout(encoded);
             }
 
@@ -246,7 +246,7 @@ fn main() {
                         .to_string(),
                 );
             }
-            
+
             Ed25519SubCommand::Ed25519GenPrivateKey(_) => {
                 let private_key = xck::asymmetric::ed25519_gen_private_key();
 
@@ -276,9 +276,58 @@ fn main() {
             }
         },
         AppSubcommand::X21159(args) => match args.subcommand {
-            X25519SubCommand::DiffiHellman {} => todo!(),
-            X25519SubCommand::X25519GenPrivateKey(_) => todo!(),
-            X25519SubCommand::X25519GenPublicKey(_) => todo!(),
+            X25519SubCommand::DiffiHellman(args) => {
+                let pem_encoded = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let pem_encoded = read_arg(args.public_key).expect("ToDo");
+
+                let (label, public_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+                    panic!("ToDo");
+                }
+
+                let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
+
+                // Format ToDo...
+                let b64_encoded_string = xck::format::base64_encode(&shared_key).expect("ToDo");
+                
+                stdout(b64_encoded_string);
+            }
+
+            X25519SubCommand::X25519GenPrivateKey(_) => {
+                let private_key = xck::asymmetric::x25519_gen_private_key();
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
+
+            X25519SubCommand::X25519GenPublicKey(args) => {
+                let bytes = read_arg(args.private_key).expect("ToDo");
+
+                let (label, private_key) = xck::format::pem_decode(&bytes).expect("ToDo");
+
+                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+                    panic!("ToDo");
+                }
+
+                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+                let pem_encoded =
+                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
+                        .expect("ToDo");
+
+                stdout(pem_encoded);
+            }
         },
     }
 }
