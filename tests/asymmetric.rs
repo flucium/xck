@@ -44,19 +44,19 @@ fn ed25519_verify() {
     );
 }
 
-#[test]
-fn ed25519_gen_keypair() {
-    // TEST_MESSAGE is hello
-    const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
+// #[test]
+// fn ed25519_gen_keypair() {
+//     // TEST_MESSAGE is hello
+//     const TEST_MESSAGE: [u8; 5] = [104, 101, 108, 108, 111];
 
-    let (private_key, public_key) = xck::asymmetric::ed25519_gen_keypair();
+//     let (private_key, public_key) = xck::asymmetric::ed25519_gen_keypair();
 
-    let signature = xck::asymmetric::ed25519_sign(&private_key, &TEST_MESSAGE).unwrap();
+//     let signature = xck::asymmetric::ed25519_sign(&private_key, &TEST_MESSAGE).unwrap();
 
-    let is_ok = xck::asymmetric::ed25519_verify(&public_key, &TEST_MESSAGE, &signature).is_ok();
+//     let is_ok = xck::asymmetric::ed25519_verify(&public_key, &TEST_MESSAGE, &signature).is_ok();
 
-    assert_eq!(is_ok, true);
-}
+//     assert_eq!(is_ok, true);
+// }
 
 #[test]
 fn ed25519_gen_public_key() {
@@ -107,18 +107,18 @@ fn x25519_diffie_hellman() {
     assert_eq!(alice_shared, bob_shared);
 }
 
-#[test]
-fn x25519_gen_keypair() {
-    let (alice_private_key, alice_public_key) = xck::asymmetric::x25519_gen_keypair();
+// #[test]
+// fn x25519_gen_keypair() {
+//     let (alice_private_key, alice_public_key) = xck::asymmetric::x25519_gen_keypair();
 
-    let (bob_private_key, bob_public_key) = xck::asymmetric::x25519_gen_keypair();
+//     let (bob_private_key, bob_public_key) = xck::asymmetric::x25519_gen_keypair();
 
-    let alice_shared = xck::asymmetric::x25519_diffie_hellman(&alice_private_key, &bob_public_key);
+//     let alice_shared = xck::asymmetric::x25519_diffie_hellman(&alice_private_key, &bob_public_key);
 
-    let bob_shared = xck::asymmetric::x25519_diffie_hellman(&bob_private_key, &alice_public_key);
+//     let bob_shared = xck::asymmetric::x25519_diffie_hellman(&bob_private_key, &alice_public_key);
 
-    assert_eq!(alice_shared, bob_shared);
-}
+//     assert_eq!(alice_shared, bob_shared);
+// }
 
 #[test]
 fn x25519_gen_public_key() {

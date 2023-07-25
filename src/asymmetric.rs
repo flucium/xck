@@ -6,25 +6,25 @@ use crate::{
     Error, Result,
 };
 
-/// Ed25519 Generate Keypair.
-///
-/// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
-///
-/// # Example
-/// ```
-/// let (private_key,public_key) = xck::asymmetric::ed25519_gen_keypair();
-///
-/// println!("{:?}\n{:?}",private_key,public_key);
-/// ```
-pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
-    let signing_key = ed25519_dalek::SigningKey::generate(&mut Rand);
-
-    let private_key = signing_key.to_bytes();
-
-    let public_key = signing_key.verifying_key().to_bytes();
-
-    (private_key, public_key)
-}
+// Ed25519 Generate Keypair.
+//
+// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
+//
+// # Example
+// ```
+// let (private_key,public_key) = xck::asymmetric::ed25519_gen_keypair();
+//
+// println!("{:?}\n{:?}",private_key,public_key);
+// ```
+// pub fn ed25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
+//     let signing_key = ed25519_dalek::SigningKey::generate(&mut Rand);
+// 
+//     let private_key = signing_key.to_bytes();
+// 
+//     let public_key = signing_key.verifying_key().to_bytes();
+// 
+//     (private_key, public_key)
+// }
 
 /// Ed25519 Gemerate private-key.
 pub fn ed25519_gen_private_key() -> [u8; SIZE_32] {
@@ -101,25 +101,25 @@ pub fn ed25519_sign(private_key: &[u8; SIZE_32], message: &[u8]) -> Result<[u8; 
     Ok(signature.to_bytes())
 }
 
-/// X25519 Generate Keypair
-///
-/// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
-///
-/// # Example
-/// ```
-/// let (private_key,public_key) = xck::asymmetric::x25519_gen_keypair();
-///
-/// println!("{:?}\n{:?}",private_key,public_key);
-/// ```
-pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
-    let static_secret = x25519_dalek::StaticSecret::random_from_rng(&mut Rand);
-
-    let public_key = x25519_dalek::PublicKey::from(&static_secret).to_bytes();
-
-    let private_key = static_secret.to_bytes();
-
-    (private_key, public_key)
-}
+// X25519 Generate Keypair
+//
+// The left of the returned value is the private_key and the right is the public_key. both are 32-byte, totaling 64 bytes.
+//
+// # Example
+// ```
+// let (private_key,public_key) = xck::asymmetric::x25519_gen_keypair();
+//
+// println!("{:?}\n{:?}",private_key,public_key);
+// ```
+// pub fn x25519_gen_keypair() -> ([u8; SIZE_32], [u8; SIZE_32]) {
+//     let static_secret = x25519_dalek::StaticSecret::random_from_rng(&mut Rand);
+// 
+//     let public_key = x25519_dalek::PublicKey::from(&static_secret).to_bytes();
+// 
+//     let private_key = static_secret.to_bytes();
+// 
+//     (private_key, public_key)
+// }
 
 /// X21159 Generate private-key.
 pub fn x25519_gen_private_key() -> [u8; SIZE_32] {
