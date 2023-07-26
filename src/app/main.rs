@@ -217,8 +217,18 @@ fn stdout(buf: impl AsRef<[u8]>) {
     let mut stdout = io::stdout().lock();
 
     stdout.write_all(buf.as_ref()).unwrap();
-    
+
     stdout.flush().unwrap();
+}
+
+fn stderr(buf: impl AsRef<[u8]>) {
+    let mut stderr = io::stderr().lock();
+
+    stderr.write_all(buf.as_ref()).unwrap();
+
+    stderr.write(&[10]).unwrap();
+
+    stderr.flush().unwrap();
 }
 
 fn main() {
@@ -231,7 +241,8 @@ fn main() {
             const LEN_MAX: u32 = 32;
 
             if args.length < LEN_MIN || args.length > LEN_MAX {
-                panic!("ToDo");
+                stderr("xck: error: Output length can be specified between 1 and 32 digits.");
+                return;
             }
 
             let bytes = xck::rand::generate_ascii()
@@ -244,21 +255,51 @@ fn main() {
 
         AppSubcommand::Ed25519(args) => match args.subcommand {
             Ed25519SubCommand::Sign(args) => {
-                let pem_encoded = read_arg(args.private_key).expect("ToDo");
+                let pem_encoded = match read_arg(args.private_key) {
+                    Err(_) => {
+                        stderr("xck: error: File read failed. The specified path may not exists.");
+                        return;
+                    }
+                    Ok(bytes) => bytes,
+                };
 
-                let (label, private_key) = xck::format::pem_decode(&pem_encoded).expect("ToDo");
+                let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
+                    Err(_) => {
+                        stderr("xck: error: Failed to decode PEM format.");
+                        return;
+                    }
+                    Ok(decoded) => decoded,
+                };
 
                 if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-                    panic!("ToDo");
+                    stderr("xck: error: The key type does not match the label in PEM format.");
+                    return;
                 }
 
-                let message = read_arg(args.message).expect("ToDo");
+                let message = match read_arg(args.message) {
+                    Err(_) => {
+                        stderr("xck: error: File read failed. The specified path may not exists.");
+                        return;
+                    }
+                    Ok(bytes) => bytes,
+                };
 
                 // Format ToDo...
-                let signature =
-                    xck::asymmetric::ed25519_sign(&private_key, &message).expect("ToDo");
+                let signature = match xck::asymmetric::ed25519_sign(&private_key, &message) {
+                    Err(_) => {
+                        stderr("xck: error: Ed25519, Signature failed.");
+                        return;
+                    }
+                    Ok(bytes) => bytes,
+                };
 
-                let encoded = xck::format::base64_encode(&signature).expect("ToDo");
+                let encoded = match xck::format::base64_encode(&signature) {
+                    Err(_) => {
+                        stderr("xck: error: Encoding to Base64 failed.");
+                        return;
+                    }
+                    Ok(b64string) => b64string,
+                };
 
                 stdout(encoded);
             }
@@ -378,6 +419,6 @@ fn main() {
             }
         },
 
-        AppSubcommand::ChaCha20Poly1305(args) => todo!(),
+        AppSubcommand::ChaCha20Poly1305(args) => {}
     }
 }
