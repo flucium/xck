@@ -217,7 +217,7 @@ fn stdout(buf: impl AsRef<[u8]>) {
     let mut stdout = io::stdout().lock();
 
     stdout.write_all(buf.as_ref()).unwrap();
-
+    
     stdout.flush().unwrap();
 }
 
