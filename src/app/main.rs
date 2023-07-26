@@ -45,6 +45,7 @@ enum AppSubcommand {
 #[derive(Args)]
 struct RandomArgs {
     #[arg(long = "length", short = 'l', default_value = "32")]
+    #[clap(alias = "len")]
     length: u32,
 }
 
