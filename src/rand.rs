@@ -7,6 +7,8 @@ use rand_chacha::{
     ChaCha20Rng,
 };
 
+pub use rand::rngs::{OsRng, ThreadRng};
+
 /// Rand implements RngCore and CryptoRng.
 ///
 /// Internally, ChaCha20Rng.
@@ -112,14 +114,12 @@ pub fn gen_12() -> [u8; SIZE_12] {
     ChaCha20Rng::from_entropy().gen::<[u8; SIZE_12]>()
 }
 
-
 /// ChaCha20Rng
 ///
 /// Generate a 32-byte random bytes, within ascii code range.
 pub fn generate_ascii() -> [u8; SIZE_32] {
-   gen_32_ascii()
+    gen_32_ascii()
 }
-
 
 /// ChaCha20Rng
 ///
