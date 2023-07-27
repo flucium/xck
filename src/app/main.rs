@@ -306,9 +306,21 @@ fn main() {
             }
 
             Ed25519SubCommand::Verify(args) => {
-                let message = read_arg(args.message).expect("ToDo");
+                let message = match read_arg(args.message) {
+                    Err(_) => {
+                        stderr("xck: error: File read failed. The specified path may not exists.");
+                        return;
+                    }
+                    Ok(bytes) => bytes,
+                };
 
-                let encoded_signature = read_arg(args.signature).expect("ToDo");
+                let encoded_signature = match read_arg(args.signature) {
+                    Err(_) => {
+                        stderr("xck: error: File read failed. The specified path may not exists.");
+                        return;
+                    }
+                    Ok(bytes) => bytes,
+                };
 
                 // Format ToDo...
                 let bytes = xck::format::base64_decode(
