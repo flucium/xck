@@ -384,7 +384,7 @@ fn ed25519_gen_public_key(private_key: String) {
     };
 
     if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-        xck_stderr("the key type does not match the label in PEM format.");
+        xck_stderr("the key type does not match the label in pem format.");
         return;
     }
 
@@ -414,7 +414,7 @@ fn x25519_diffie_hellman(private_key: String, public_key: String) {
     };
 
     if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-        xck_stderr("the key type does not match the label in PEM format.");
+        xck_stderr("the key type does not match the label in pem format.");
         return;
     }
 
@@ -435,7 +435,7 @@ fn x25519_diffie_hellman(private_key: String, public_key: String) {
     };
 
     if label != xck::format::PEM_LABEL_PUBLIC_KEY {
-        xck_stderr("the key type does not match the label in PEM format.");
+        xck_stderr("the key type does not match the label in pem format.");
         return;
     }
 
@@ -474,7 +474,7 @@ fn x25519_gen_public_key(private_key: String) {
     };
 
     if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-        xck_stderr("the key type does not match the label in PEM format.");
+        xck_stderr("the key type does not match the label in pem format.");
         return;
     }
 
