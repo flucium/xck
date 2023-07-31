@@ -1,7 +1,5 @@
 use std::{
-    self,
-    fmt::Display,
-    fs,
+    self, fs,
     io::{self, Read, Write},
     path::{Path, PathBuf},
 };
@@ -38,10 +36,6 @@ enum AppSubcommand {
     /// X25519 is ...
     #[command(name = "x25519")]
     X21159(X25519Args),
-
-    #[command(name = "chacha20-poly1305")]
-    #[clap(alias = "chacha20poly1305")]
-    ChaCha20Poly1305(ChaCha20Poly1305Args),
 }
 
 #[derive(Args)]
@@ -237,273 +231,289 @@ fn xck_stderr(buf: impl AsRef<[u8]>) {
     stderr_lock.flush().unwrap();
 }
 
+fn random(length: u32) {
+    const LEN_MIN: u32 = 1;
+
+    const LEN_MAX: u32 = 32;
+
+    if length < LEN_MIN || length > LEN_MAX {
+        xck_stderr("the minimum length is 1-byte and the maximum is 32-byte.");
+        return;
+    }
+
+    let bytes = xck::rand::generate_ascii()
+        .get(0..length as usize)
+        .unwrap()
+        .to_vec();
+
+    xck_stdout(bytes);
+}
+
+fn ed25519_sign(private_key: String, message: String) {
+    let pem_encoded = match read_arg(private_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(decoded) => decoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+        xck_stderr("the key type does not match the label in pem format.");
+        return;
+    }
+
+    let message = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    // Format ToDo...
+    let signature = match xck::asymmetric::ed25519_sign(&private_key, &message) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let encoded = match xck::format::base64_encode(&signature) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(b64string) => b64string,
+    };
+
+    xck_stdout(encoded);
+}
+
+fn ed25519_verify(public_key: String, message: String, signature: String) {
+    let message = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let encoded_signature = match read_arg(signature) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    // Format ToDo...
+    let bytes = match xck::format::base64_decode(
+        String::from_utf8(encoded_signature).unwrap_or_default(),
+    ) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let signature: [u8; 64] = bytes.try_into().unwrap_or([0u8; 64]);
+
+    let pem_encoded = match read_arg(public_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+        xck_stderr("the key type does not match the label in pem format.");
+        return;
+    }
+
+    xck_stdout(
+        xck::asymmetric::ed25519_verify(&public_key, &message, &signature)
+            .is_ok()
+            .to_string(),
+    );
+}
+
+fn ed25519_gen_private_key() {
+    let private_key = xck::asymmetric::ed25519_gen_private_key();
+
+    let pem_encoded =
+        xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key).unwrap();
+
+    xck_stdout(pem_encoded);
+}
+
+fn ed25519_gen_public_key(private_key: String) {
+    let bytes = match read_arg(private_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, private_key) = match xck::format::pem_decode(&bytes) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+        xck_stderr("the key type does not match the label in PEM format.");
+        return;
+    }
+
+    let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+    let pem_encoded =
+        xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key).unwrap();
+
+    xck_stdout(pem_encoded);
+}
+
+fn x25519_diffie_hellman(private_key: String, public_key: String) {
+    let pem_encoded = match read_arg(private_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+        xck_stderr("the key type does not match the label in PEM format.");
+        return;
+    }
+
+    let pem_encoded = match read_arg(public_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+        xck_stderr("the key type does not match the label in PEM format.");
+        return;
+    }
+
+    let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
+
+    // Format ToDo...
+    let b64_encoded_string = xck::format::base64_encode(&shared_key).unwrap();
+
+    xck_stdout(b64_encoded_string);
+}
+
+fn x25519_gen_private_key() {
+    let private_key = xck::asymmetric::x25519_gen_private_key();
+
+    let pem_encoded =
+        xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key).unwrap();
+
+    xck_stdout(pem_encoded);
+}
+
+fn x25519_gen_public_key(private_key: String) {
+    let bytes = match read_arg(private_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let (label, private_key) = match xck::format::pem_decode(&bytes) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
+
+    if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+        xck_stderr("the key type does not match the label in PEM format.");
+        return;
+    }
+
+    let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
+
+    let pem_encoded =
+        xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key).unwrap();
+
+    xck_stdout(pem_encoded);
+}
+
 fn main() {
     let command = AppCommand::parse();
 
     match command.subcommand {
-        AppSubcommand::Random(args) => {
-            const LEN_MIN: u32 = 1;
-
-            const LEN_MAX: u32 = 32;
-
-            if args.length < LEN_MIN || args.length > LEN_MAX {
-                xck_stderr("The minimum length is 1-byte and the maximum is 32-byte.");
-                return;
-            }
-
-            let bytes = xck::rand::generate_ascii()
-                .get(0..args.length as usize)
-                .unwrap()
-                .to_vec();
-
-            xck_stdout(bytes);
-        }
+        AppSubcommand::Random(args) => random(args.length),
 
         AppSubcommand::Ed25519(args) => match args.subcommand {
-            Ed25519SubCommand::Sign(args) => {
-                let pem_encoded = match read_arg(args.private_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(decoded) => decoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                let message = match read_arg(args.message) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                // Format ToDo...
-                let signature = match xck::asymmetric::ed25519_sign(&private_key, &message) {
-                    Err(_) => {
-                        xck_stderr("Ed25519, Failed to sign.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let encoded = match xck::format::base64_encode(&signature) {
-                    Err(_) => {
-                        xck_stderr("Base64, Failed to decode.");
-                        return;
-                    }
-                    Ok(b64string) => b64string,
-                };
-
-                xck_stdout(encoded);
-            }
+            Ed25519SubCommand::Sign(args) => ed25519_sign(args.private_key, args.message),
 
             Ed25519SubCommand::Verify(args) => {
-                let message = match read_arg(args.message) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let encoded_signature = match read_arg(args.signature) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                // Format ToDo...
-                let bytes = match xck::format::base64_decode(
-                    String::from_utf8(encoded_signature).unwrap_or_default(),
-                ) {
-                    Err(_) => {
-                        xck_stderr("Base64, Failed to decode.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let signature: [u8; 64] = bytes.try_into().unwrap_or([0u8; 64]);
-
-                let pem_encoded = match read_arg(args.public_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(encoded) => encoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                xck_stdout(
-                    xck::asymmetric::ed25519_verify(&public_key, &message, &signature)
-                        .is_ok()
-                        .to_string(),
-                );
+                ed25519_verify(args.public_key, args.message, args.signature)
             }
 
-            Ed25519SubCommand::Ed25519GenPrivateKey(_) => {
-                let private_key = xck::asymmetric::ed25519_gen_private_key();
-
-                let pem_encoded =
-                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
-                        .unwrap();
-
-                xck_stdout(pem_encoded);
-            }
+            Ed25519SubCommand::Ed25519GenPrivateKey(_) => ed25519_gen_private_key(),
 
             Ed25519SubCommand::Ed25519GenPublicKey(args) => {
-                let bytes = match read_arg(args.private_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, private_key) = match xck::format::pem_decode(&bytes) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(encoded) => encoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
-
-                let pem_encoded =
-                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
-                        .unwrap();
-
-                xck_stdout(pem_encoded);
+                ed25519_gen_public_key(args.private_key)
             }
         },
 
         AppSubcommand::X21159(args) => match args.subcommand {
             X25519SubCommand::DiffiHellman(args) => {
-                let pem_encoded = match read_arg(args.private_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(encoded) => encoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                let pem_encoded = match read_arg(args.public_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(encoded) => encoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PUBLIC_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
-
-                // Format ToDo...
-                let b64_encoded_string = xck::format::base64_encode(&shared_key).unwrap();
-
-                xck_stdout(b64_encoded_string);
+                x25519_diffie_hellman(args.private_key, args.public_key)
             }
 
-            X25519SubCommand::X25519GenPrivateKey(_) => {
-                let private_key = xck::asymmetric::x25519_gen_private_key();
+            X25519SubCommand::X25519GenPrivateKey(_) => x25519_gen_private_key(),
 
-                let pem_encoded =
-                    xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key)
-                        .unwrap();
-
-                xck_stdout(pem_encoded);
-            }
-
-            X25519SubCommand::X25519GenPublicKey(args) => {
-                let bytes = match read_arg(args.private_key) {
-                    Err(_) => {
-                        xck_stderr("Failed to read file.");
-                        return;
-                    }
-                    Ok(bytes) => bytes,
-                };
-
-                let (label, private_key) = match xck::format::pem_decode(&bytes) {
-                    Err(_) => {
-                        xck_stderr("PEM format, Failed to decode.");
-                        return;
-                    }
-                    Ok(encoded) => encoded,
-                };
-
-                if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-                    xck_stderr("The key type does not match the label in PEM format.");
-                    return;
-                }
-
-                let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
-
-                let pem_encoded =
-                    xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key)
-                        .unwrap();
-
-                xck_stdout(pem_encoded);
-            }
+            X25519SubCommand::X25519GenPublicKey(args) => x25519_gen_public_key(args.private_key),
         },
-
-        AppSubcommand::ChaCha20Poly1305(_) => {}
     }
 }
