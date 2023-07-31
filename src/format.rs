@@ -64,6 +64,21 @@ pub fn base64_encode(bytes: &[u8]) -> Result<String> {
     Ok(b64_string)
 }
 
+/// Base64 Decode
+#[cfg(feature = "alloc")]
+pub fn base64_decode_alloc(b64_string: impl Into<String>) -> Result<Vec<u8>> {
+    let bytes =
+        Base64::decode_vec(&b64_string.into()).map_err(|err| Error::new(err.to_string()))?;
+
+    Ok(bytes)
+}
+
+/// Base64 Encode
+#[cfg(feature = "alloc")]
+pub fn base64_encode_alloc(bytes: &[u8]) -> String {
+    Base64::encode_string(bytes)
+}
+
 /// Hex Decode.
 ///
 /// # Example
