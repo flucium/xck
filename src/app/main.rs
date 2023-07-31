@@ -246,37 +246,6 @@ fn xck_stderr(buf: impl AsRef<[u8]>) {
     stderr_lock.flush().unwrap();
 }
 
-fn base64_encode(message: String) {
-    let bytes = match read_arg(message) {
-        Err(err) => {
-            xck_stderr(err.to_string());
-            return;
-        }
-        Ok(bytes) => bytes,
-    };
-    match xck::format::base64_encode(&bytes) {
-        Err(err) => {
-            xck_stderr(err.message());
-        }
-        Ok(b64_string) => xck_stdout(b64_string),
-    }
-}
-
-fn base64_decode(message: String) {
-    let bytes = match read_arg(message) {
-        Err(err) => {
-            xck_stderr(err.to_string());
-            return;
-        }
-        Ok(bytes) => bytes,
-    };
-    match xck::format::base64_decode(String::from_utf8(bytes).unwrap_or_default()) {
-        Err(err) => {
-            xck_stderr(err.message());
-        }
-        Ok(b64_string) => xck_stdout(b64_string),
-    }
-}
 
 fn random(length: u32) {
     const LEN_MIN: u32 = 1;
