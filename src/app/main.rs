@@ -67,12 +67,11 @@ enum AppSubcommand {
 //     message: String,
 // }
 
-
 #[derive(Args)]
 struct Sha2Args {
     #[arg(long = "message", short = 'm')]
     #[clap(alias = "msg")]
-    message: String,
+    message: Option<String>,
 
     #[arg(long = "uppercase", short = 'u')]
     #[clap(alias = "upper")]
@@ -627,10 +626,10 @@ fn main() {
             X25519SubCommand::X25519GenPublicKey(args) => x25519_gen_public_key(args.private_key),
         },
 
-        AppSubcommand::Sha256(args) => sha256(args.message, args.uppercase),
+        AppSubcommand::Sha256(args) => sha256(args.message.unwrap_or_default(), args.uppercase),
 
-        AppSubcommand::Sha512(args) => sha512(args.message, args.uppercase),
+        AppSubcommand::Sha512(args) => sha512(args.message.unwrap_or_default(), args.uppercase),
 
-        AppSubcommand::Sha512_256(args) => sha512_256(args.message, args.uppercase),
+        AppSubcommand::Sha512_256(args) => sha512_256(args.message.unwrap_or_default(), args.uppercase),
     }
 }
