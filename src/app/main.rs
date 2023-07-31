@@ -67,6 +67,7 @@ enum AppSubcommand {
 //     message: String,
 // }
 
+
 #[derive(Args)]
 struct Sha2Args {
     #[arg(long = "message", short = 'm')]
@@ -526,7 +527,7 @@ fn x25519_gen_public_key(private_key: String) {
     xck_stdout(pem_encoded);
 }
 
-// fn blake3(message: String) {}
+// fn blake3(message: String,uppercase: bool) {}
 
 // fn blake3_xof(message: String, length: u32) {}
 
@@ -625,9 +626,9 @@ fn main() {
 
             X25519SubCommand::X25519GenPublicKey(args) => x25519_gen_public_key(args.private_key),
         },
-        
+
         AppSubcommand::Sha256(args) => sha256(args.message, args.uppercase),
-        
+
         AppSubcommand::Sha512(args) => sha512(args.message, args.uppercase),
 
         AppSubcommand::Sha512_256(args) => sha512_256(args.message, args.uppercase),
