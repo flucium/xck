@@ -26,7 +26,7 @@ fn base64_decode() {
 
 #[cfg(feature="alloc")]
 #[test]
-fn hex_encode() {
+fn hex_encode_alloc() {
     // TEST_BYTES is hello
     const TEST_BYTES: [u8; 5] = [104, 101, 108, 108, 111];
     
