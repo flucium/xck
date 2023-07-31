@@ -89,7 +89,8 @@ pub fn base64_encode_alloc(bytes: &[u8]) -> String {
 ///
 /// println!("{:?}",bytes);
 /// ```
-pub fn hex_decode(hex_string: impl Into<String>) -> Vec<u8> {
+#[cfg(feature="alloc")]
+pub fn hex_decode_alloc(hex_string: impl Into<String>) -> Vec<u8> {
     let string = hex_string.into();
 
     let bytes = string.as_bytes();
@@ -123,12 +124,13 @@ pub fn hex_decode(hex_string: impl Into<String>) -> Vec<u8> {
 ///
 /// println!("{}",hex_string);
 /// ```
-pub fn hex_encode(bytes: &[u8]) -> String {
+#[cfg(feature="alloc")]
+pub fn hex_encode_alloc(bytes: &[u8]) -> String {
     //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     const HEX_TABLE: [u8; 16] = [
         48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
     ];
-
+    
     let mut buf = Vec::with_capacity(bytes.len() * 2);
 
     for byte in bytes {

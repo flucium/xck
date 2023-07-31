@@ -23,6 +23,8 @@ fn base64_decode() {
     );
 }
 
+
+#[cfg(feature="alloc")]
 #[test]
 fn hex_encode() {
     // TEST_BYTES is hello
@@ -31,7 +33,7 @@ fn hex_encode() {
     const TEST_HEX_STRING:&str="68656c6c6f";
 
     assert_eq!(
-        xck::format::hex_encode(&TEST_BYTES),
+        xck::format::hex_encode_alloc(&TEST_BYTES),
         TEST_HEX_STRING
     );
 }
