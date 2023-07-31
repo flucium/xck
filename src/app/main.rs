@@ -24,7 +24,7 @@ struct AppCommand {
 
 #[derive(Subcommand)]
 enum AppSubcommand {
-    /// random is...
+    /// Random is...
     #[command(name = "random")]
     #[clap(alias = "rand")]
     Random(RandomArgs),
@@ -36,21 +36,46 @@ enum AppSubcommand {
     /// X25519 is ...
     #[command(name = "x25519")]
     X21159(X25519Args),
+
+    /// SHA256 is...
+    #[command(name = "sha256")]
+    #[clap(alias = "sha2")]
+    Sha256(Sha2Args),
+
+    /// SHA512 is ...
+    #[command(name = "sha512")]
+    Sha512(Sha2Args),
+
+    /// SHA512/256 is...
+    #[command(name = "sha512/256")]
+    #[clap(alias = "sha512_256")]
+    Sha512_256(Sha2Args),
 }
 
+// #[derive(Args)]
+// struct Base64Args {
+//     #[arg(long = "encode", short = 'e')]
+//     #[clap(alias = "enc")]
+//     encode: bool,
+
+//     #[arg(long = "decode", short = 'd')]
+//     #[clap(alias = "dec")]
+//     decode: bool,
+
+//     #[arg(long = "message", short = 'm')]
+//     #[clap(alias = "msg")]
+//     message: String,
+// }
+
 #[derive(Args)]
-struct Base64Args {
-    #[arg(long = "encode", short = 'e')]
-    #[clap(alias = "enc")]
-    encode: bool,
-
-    #[arg(long = "decode", short = 'd')]
-    #[clap(alias = "dec")]
-    decode: bool,
-
+struct Sha2Args {
     #[arg(long = "message", short = 'm')]
     #[clap(alias = "msg")]
     message: String,
+
+    #[arg(long = "uppercase", short = 'u')]
+    #[clap(alias = "upper")]
+    uppercase: bool,
 }
 
 #[derive(Args)]
@@ -501,6 +526,76 @@ fn x25519_gen_public_key(private_key: String) {
     xck_stdout(pem_encoded);
 }
 
+// fn blake3(message: String) {}
+
+// fn blake3_xof(message: String, length: u32) {}
+
+// fn blake3_kdf(context: String, message: String) {}
+
+// fn blake3_mac(key: String, message: String) {}
+
+fn sha256(message: String, uppercase: bool) {
+    let message = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let hex_string = xck::format::hex_encode_alloc(&xck::hash::sha256(&message));
+
+    xck_stdout(if uppercase {
+        hex_string.to_uppercase()
+    } else {
+        hex_string
+    });
+}
+
+fn sha512(message: String, uppercase: bool) {
+    let message = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let hex_string = xck::format::hex_encode_alloc(&xck::hash::sha512(&message));
+
+    xck_stdout(if uppercase {
+        hex_string.to_uppercase()
+    } else {
+        hex_string
+    });
+}
+
+fn sha512_256(message: String, uppercase: bool) {
+    let message = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+
+    let hex_string = xck::format::hex_encode_alloc(&xck::hash::sha512_256(&message));
+
+    xck_stdout(if uppercase {
+        hex_string.to_uppercase()
+    } else {
+        hex_string
+    });
+}
+
+// fn chacha20_poly1305_encrypt(key: String, aad: String, message: String) {}
+
+// fn chacha20_poly1305_decrypt(key: String, aad: String, message: String) {}
+
+// fn xchacha20_poly1305_encrypt(key: String, aad: String, message: String) {}
+
+// fn xchacha20_poly1305_decrypt(key: String, aad: String, message: String) {}
+
 fn main() {
     let command = AppCommand::parse();
 
@@ -530,5 +625,11 @@ fn main() {
 
             X25519SubCommand::X25519GenPublicKey(args) => x25519_gen_public_key(args.private_key),
         },
+        
+        AppSubcommand::Sha256(args) => sha256(args.message, args.uppercase),
+        
+        AppSubcommand::Sha512(args) => sha512(args.message, args.uppercase),
+
+        AppSubcommand::Sha512_256(args) => sha512_256(args.message, args.uppercase),
     }
 }
