@@ -39,6 +39,21 @@ enum AppSubcommand {
 }
 
 #[derive(Args)]
+struct Base64Args {
+    #[arg(long = "encode", short = 'e')]
+    #[clap(alias = "enc")]
+    encode: bool,
+
+    #[arg(long = "decode", short = 'd')]
+    #[clap(alias = "dec")]
+    decode: bool,
+
+    #[arg(long = "message", short = 'm')]
+    #[clap(alias = "msg")]
+    message: String,
+}
+
+#[derive(Args)]
 struct RandomArgs {
     #[arg(long = "length", short = 'l', default_value = "32")]
     #[clap(alias = "len")]
@@ -229,6 +244,38 @@ fn xck_stderr(buf: impl AsRef<[u8]>) {
     stderr_lock.write(buf.as_ref()).unwrap();
 
     stderr_lock.flush().unwrap();
+}
+
+fn base64_encode(message: String) {
+    let bytes = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+    match xck::format::base64_encode(&bytes) {
+        Err(err) => {
+            xck_stderr(err.message());
+        }
+        Ok(b64_string) => xck_stdout(b64_string),
+    }
+}
+
+fn base64_decode(message: String) {
+    let bytes = match read_arg(message) {
+        Err(err) => {
+            xck_stderr(err.to_string());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
+    match xck::format::base64_decode(String::from_utf8(bytes).unwrap_or_default()) {
+        Err(err) => {
+            xck_stderr(err.message());
+        }
+        Ok(b64_string) => xck_stdout(b64_string),
+    }
 }
 
 fn random(length: u32) {
