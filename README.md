@@ -54,9 +54,9 @@ BLAKE3 MAC
 ## Format
 Base64 (constant time)
 
-Base64 alloc (constant time)
+Base64 *alloc* (constant time)
 
-Hex
+Hex *alloc*
 
 ## Random (CSPRNG)
 Rand has internalized ChaCha20Rng.
