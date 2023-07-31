@@ -54,6 +54,8 @@ BLAKE3 MAC
 ## Format
 Base64 (constant time)
 
+Base64 alloc (constant time)
+
 Hex
 
 ## Random (CSPRNG)
