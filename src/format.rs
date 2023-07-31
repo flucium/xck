@@ -3,7 +3,7 @@ use base64ct::{Base64, Encoding};
 
 type Label<'a> = &'a str;
 
-const BASE64_BUFFER_SIZE: usize = 1024;
+const BASE64_BUFFER_SIZE: usize = 256;
 
 #[cfg(target_os = "macos")]
 const LINE_ENDING: pem_rfc7468::LineEnding = pem_rfc7468::LineEnding::LF;
