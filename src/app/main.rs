@@ -246,7 +246,6 @@ fn xck_stderr(buf: impl AsRef<[u8]>) {
     stderr_lock.flush().unwrap();
 }
 
-
 fn random(length: u32) {
     const LEN_MIN: u32 = 1;
 
