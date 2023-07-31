@@ -5,6 +5,8 @@ type Label<'a> = &'a str;
 
 const BASE64_BUFFER_SIZE: usize = 256;
 
+const PEM_BUFFER_SIZE: usize = 1024;
+
 #[cfg(target_os = "macos")]
 const LINE_ENDING: pem_rfc7468::LineEnding = pem_rfc7468::LineEnding::LF;
 
@@ -140,7 +142,7 @@ pub fn hex_encode(bytes: &[u8]) -> String {
 /// println!("{private_key_pem}\n{public_key_pem}");
 /// ```
 pub fn pem_encode(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
-    let mut buf: [u8; 1024] = [0u8; 1024];
+    let mut buf: [u8; 1024] = [0u8; PEM_BUFFER_SIZE];
 
     let string = pem_rfc7468::encode(label, LINE_ENDING, key, &mut buf)
         .map_err(|err| Error::new(err.to_string()))?;
@@ -165,7 +167,7 @@ pub fn pem_encode(label: Label, key: &[u8; SIZE_32]) -> Result<String> {
 /// println!("Label: {}\nKey: {:?}",label,key);
 /// ```
 pub fn pem_decode(pem: &[u8]) -> Result<(Label, [u8; SIZE_32])> {
-    let mut buf: [u8; 1024] = [0u8; 1024];
+    let mut buf: [u8; 1024] = [0u8; PEM_BUFFER_SIZE];
 
     let (label, bytes) =
         pem_rfc7468::decode(pem, &mut buf).map_err(|err| Error::new(err.to_string()))?;
