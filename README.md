@@ -34,6 +34,7 @@ XChaCha20-Poly1305
 ## Asymmetric
 Ed25519
 
+X25519
 
 ## Hash
 SHA256
@@ -57,6 +58,3 @@ Hex
 
 ## Random (CSPRNG)
 Rand has internalized ChaCha20Rng.
-
-## Compress
-...
