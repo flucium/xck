@@ -22,7 +22,7 @@ pub const PEM_LABEL_PUBLIC_KEY: Label = "PUBLIC KEY";
 
 /// Base64 Decode.
 ///
-/// constant time.
+/// constant time. max size: 256-byte.
 ///
 /// # Example
 /// ```
@@ -44,7 +44,7 @@ pub fn base64_decode(b64_string: impl Into<String>) -> Result<Vec<u8>> {
 
 /// Base64 Encode.
 ///
-/// constant time.
+/// constant time. max size: 256-byte.
 ///
 /// # Example
 /// ```
