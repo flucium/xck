@@ -17,7 +17,7 @@ Use the following libraries as backend.
 [https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)
 
 ## Use
-Click here for details on command operations: *in preparation*.
+Click here for details on command operations: [*in preparation*](#)
 
 # App
 ...
@@ -29,10 +29,14 @@ Click here for details on command operations: *in preparation*.
 ...
 
 ## X25519
-...
+
 
 ## SHA2
-...
+SHA256
+
+SHA512
+
+SHA512/256
 
 # Lib
 ## Symmetric
