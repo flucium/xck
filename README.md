@@ -16,10 +16,11 @@ Use the following libraries as backend.
 - BLAKE3<br>
 [https://github.com/BLAKE3-team/BLAKE3/](https://github.com/BLAKE3-team/BLAKE3/)
 
-# ToDo
-Writing ToDo.
+## Use
+Click here for details on command operations: *in preparation*.
 
 # App
+...
 
 ## Random
 ...
@@ -33,7 +34,7 @@ Writing ToDo.
 ## SHA2
 ...
 
-# Libxck
+# Lib
 ## Symmetric
 AES-128-GCM
 
@@ -72,5 +73,10 @@ Base64 *alloc* (constant time)
 
 Hex *alloc*
 
+PEM
+
 ## Random (CSPRNG)
 Rand has internalized ChaCha20Rng.
+
+# ToDo
+Writing ToDo.
