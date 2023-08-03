@@ -11,8 +11,6 @@ if [ $1 = "release" ]; then
         os="linux"
     elif [ $os = "Darwin" ]; then
         os="darwin"
-    elif [ $os = "Windows" ]; then
-        os="windows"
     else
         echo ERR
         exit 1
