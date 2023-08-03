@@ -1,3 +1,9 @@
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
+use alloc::{string::String, vec::Vec};
+
 use crate::{size::SIZE_32, Error, Result};
 use base64ct::{Base64, Encoding};
 
@@ -28,18 +34,18 @@ pub const PEM_LABEL_PUBLIC_KEY: Label = "PUBLIC KEY";
 /// ```
 /// let b64_string = "aGVsbG8";
 ///
-/// let bytes = xck::format::base64_decode(&b64_string);
+/// let (bytes, len) = xck::format::base64_decode(&b64_string).unwrap();
 ///
-/// println!("{:?}",bytes);
+/// println!("{:?}",bytes[..len]);
 /// ```
-pub fn base64_decode(b64_string: impl Into<String>) -> Result<Vec<u8>> {
+pub fn base64_decode(b64_string: impl Into<String>) -> Result<([u8; BASE64_BUFFER_SIZE], usize)> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
-    let bytes = Base64::decode(b64_string.into(), &mut buf)
+    let len = Base64::decode(b64_string.into(), &mut buf)
         .map_err(|err| Error::new(err.to_string()))?
-        .to_vec();
+        .len();
 
-    Ok(bytes)
+    Ok((buf, len))
 }
 
 /// Base64 Encode.
@@ -50,18 +56,18 @@ pub fn base64_decode(b64_string: impl Into<String>) -> Result<Vec<u8>> {
 /// ```
 /// let bytes: [u8; 5] = [104, 101, 108, 108, 111];
 ///
-/// let b64_string = xck::format::base64_encode(bytes);
+/// let (encoded,len) = xck::format::base64_encode(bytes);
 ///
-/// println!("{:?}",b64_string);
+/// println!("{:?}",String::from_utf8_lossy(&encoded[0..len]));
 /// ```
-pub fn base64_encode(bytes: &[u8]) -> Result<String> {
+pub fn base64_encode(bytes: &[u8]) -> Result<([u8; BASE64_BUFFER_SIZE], usize)> {
     let mut buf = [0u8; BASE64_BUFFER_SIZE];
 
-    let b64_string: String = Base64::encode(bytes, &mut buf)
+    let len = Base64::encode(bytes, &mut buf)
         .map_err(|err| Error::new(err.to_string()))?
-        .to_string();
+        .len();
 
-    Ok(b64_string)
+    Ok((buf, len))
 }
 
 /// Base64 Decode
@@ -89,7 +95,7 @@ pub fn base64_encode_alloc(bytes: &[u8]) -> String {
 ///
 /// println!("{:?}",bytes);
 /// ```
-#[cfg(feature="alloc")]
+#[cfg(feature = "alloc")]
 pub fn hex_decode_alloc(hex_string: impl Into<String>) -> Vec<u8> {
     let string = hex_string.into();
 
@@ -124,13 +130,13 @@ pub fn hex_decode_alloc(hex_string: impl Into<String>) -> Vec<u8> {
 ///
 /// println!("{}",hex_string);
 /// ```
-#[cfg(feature="alloc")]
+#[cfg(feature = "alloc")]
 pub fn hex_encode_alloc(bytes: &[u8]) -> String {
     //'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     const HEX_TABLE: [u8; 16] = [
         48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
     ];
-    
+
     let mut buf = Vec::with_capacity(bytes.len() * 2);
 
     for byte in bytes {
