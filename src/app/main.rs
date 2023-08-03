@@ -291,7 +291,7 @@ fn random(length: u32) {
 }
 
 fn ed25519_sign(private_key: String, message: String) {
-    let pem_encoded = match read_arg(private_key) {
+    let encoded_pem = match read_arg(private_key) {
         Err(err) => {
             xck_stderr(err.to_string().to_lowercase());
             return;
@@ -299,7 +299,7 @@ fn ed25519_sign(private_key: String, message: String) {
         Ok(bytes) => bytes,
     };
 
-    let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
+    let (label, private_key) = match xck::format::pem_decode(&encoded_pem) {
         Err(err) => {
             xck_stderr(err.message().to_lowercase());
             return;
@@ -320,7 +320,6 @@ fn ed25519_sign(private_key: String, message: String) {
         Ok(bytes) => bytes,
     };
 
-    // Format ToDo...
     let signature = match xck::asymmetric::ed25519_sign(&private_key, &message) {
         Err(err) => {
             xck_stderr(err.message().to_lowercase());
@@ -329,22 +328,7 @@ fn ed25519_sign(private_key: String, message: String) {
         Ok(bytes) => bytes,
     };
 
-    // let encoded = match xck::format::base64_encode(&signature) {
-    //     Err(err) => {
-    //         xck_stderr(err.message().to_lowercase());
-    //         return;
-    //     }
-    //     Ok((bytes,len)) => bytes[0..len],
-    // };
-    let (bytes, len) = match xck::format::base64_encode(&signature) {
-        Err(err) => {
-            xck_stderr(err.message().to_lowercase());
-            return;
-        }
-        Ok((bytes, len)) => (bytes, len),
-    };
-
-    let encoded = &bytes[..len];
+    let encoded = xck::format::base64_encode_alloc(&signature);
 
     xck_stdout(encoded);
 }
@@ -366,22 +350,17 @@ fn ed25519_verify(public_key: String, message: String, signature: String) {
         Ok(bytes) => bytes,
     };
 
-    // // Format ToDo...
-    let (bytes, len) = match xck::format::base64_decode(
+    let signature: [u8; 64] = match xck::format::base64_decode_alloc(
         String::from_utf8(encoded_signature).unwrap_or_default(),
     ) {
         Err(err) => {
             xck_stderr(err.message().to_lowercase());
             return;
         }
-        Ok((bytes, len)) => (bytes, len),
+        Ok(bytes) => bytes.try_into().unwrap_or([0u8; 64]),
     };
 
-    let bytes = &bytes[..len];
-
-    let signature: [u8; 64] = bytes.try_into().unwrap_or([0u8; 64]);
-
-    let pem_encoded = match read_arg(public_key) {
+    let encoded_pem = match read_arg(public_key) {
         Err(err) => {
             xck_stderr(err.to_string().to_lowercase());
             return;
@@ -389,7 +368,7 @@ fn ed25519_verify(public_key: String, message: String, signature: String) {
         Ok(bytes) => bytes,
     };
 
-    let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
+    let (label, public_key) = match xck::format::pem_decode(&encoded_pem) {
         Err(err) => {
             xck_stderr(err.message().to_lowercase());
             return;
@@ -412,10 +391,10 @@ fn ed25519_verify(public_key: String, message: String, signature: String) {
 fn ed25519_gen_private_key() {
     let private_key = xck::asymmetric::ed25519_gen_private_key();
 
-    let pem_encoded =
+    let encoded_pem =
         xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key).unwrap();
 
-    xck_stdout(pem_encoded);
+    xck_stdout(encoded_pem);
 }
 
 fn ed25519_gen_public_key(private_key: String) {
@@ -442,70 +421,70 @@ fn ed25519_gen_public_key(private_key: String) {
 
     let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
 
-    let pem_encoded =
+    let encoded_pem =
         xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key).unwrap();
 
-    xck_stdout(pem_encoded);
+    xck_stdout(encoded_pem);
 }
 
 fn x25519_diffie_hellman(private_key: String, public_key: String) {
-    // let pem_encoded = match read_arg(private_key) {
-    //     Err(err) => {
-    //         xck_stderr(err.to_string().to_lowercase());
-    //         return;
-    //     }
-    //     Ok(bytes) => bytes,
-    // };
+    let encoded_pem = match read_arg(private_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
 
-    // let (label, private_key) = match xck::format::pem_decode(&pem_encoded) {
-    //     Err(err) => {
-    //         xck_stderr(err.message().to_lowercase());
-    //         return;
-    //     }
-    //     Ok(encoded) => encoded,
-    // };
+    let (label, private_key) = match xck::format::pem_decode(&encoded_pem) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
 
-    // if label != xck::format::PEM_LABEL_PRIVATE_KEY {
-    //     xck_stderr("the key type does not match the label in pem format.");
-    //     return;
-    // }
+    if label != xck::format::PEM_LABEL_PRIVATE_KEY {
+        xck_stderr("the key type does not match the label in pem format.");
+        return;
+    }
 
-    // let pem_encoded = match read_arg(public_key) {
-    //     Err(err) => {
-    //         xck_stderr(err.to_string().to_lowercase());
-    //         return;
-    //     }
-    //     Ok(bytes) => bytes,
-    // };
+    let encoded_pem = match read_arg(public_key) {
+        Err(err) => {
+            xck_stderr(err.to_string().to_lowercase());
+            return;
+        }
+        Ok(bytes) => bytes,
+    };
 
-    // let (label, public_key) = match xck::format::pem_decode(&pem_encoded) {
-    //     Err(err) => {
-    //         xck_stderr(err.message().to_lowercase());
-    //         return;
-    //     }
-    //     Ok(encoded) => encoded,
-    // };
+    let (label, public_key) = match xck::format::pem_decode(&encoded_pem) {
+        Err(err) => {
+            xck_stderr(err.message().to_lowercase());
+            return;
+        }
+        Ok(encoded) => encoded,
+    };
 
-    // if label != xck::format::PEM_LABEL_PUBLIC_KEY {
-    //     xck_stderr("the key type does not match the label in pem format.");
-    //     return;
-    // }
+    if label != xck::format::PEM_LABEL_PUBLIC_KEY {
+        xck_stderr("the key type does not match the label in pem format.");
+        return;
+    }
 
-    // let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
+    let shared_key = xck::asymmetric::x25519_diffie_hellman(&private_key, &public_key);
 
-    // // Format ToDo...
-    // let b64_encoded_string = xck::format::base64_encode(&shared_key).unwrap();
+    // Format ToDo...
+    let b64_encoded_string = xck::format::base64_encode_alloc(&shared_key);
 
-    // xck_stdout(b64_encoded_string);
+    xck_stdout(b64_encoded_string);
 }
 
 fn x25519_gen_private_key() {
     let private_key = xck::asymmetric::x25519_gen_private_key();
 
-    let pem_encoded =
+    let encoded_pem =
         xck::format::pem_encode(xck::format::PEM_LABEL_PRIVATE_KEY, &private_key).unwrap();
 
-    xck_stdout(pem_encoded);
+    xck_stdout(encoded_pem);
 }
 
 fn x25519_gen_public_key(private_key: String) {
@@ -532,10 +511,10 @@ fn x25519_gen_public_key(private_key: String) {
 
     let public_key = xck::asymmetric::ed25519_gen_public_key(&private_key);
 
-    let pem_encoded =
+    let encoded_pem =
         xck::format::pem_encode(xck::format::PEM_LABEL_PUBLIC_KEY, &public_key).unwrap();
 
-    xck_stdout(pem_encoded);
+    xck_stdout(encoded_pem);
 }
 
 // fn blake3(message: String,uppercase: bool) {}
