@@ -3,7 +3,6 @@ pub mod format;
 pub mod hash;
 pub mod rand;
 mod size;
-pub mod ssh;
 pub mod symmetric;
 
 pub type Result<T> = core::result::Result<T, Error>;
