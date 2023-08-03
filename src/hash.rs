@@ -95,90 +95,90 @@ pub fn sha256(bytes: &[u8]) -> [u8; SIZE_32] {
     Sha256::digest(bytes).into()
 }
 
-/// # WARNING
-/// This is in the development and even PHC-string is not supported.
-pub mod password_hash {
+// /// # WARNING
+// /// This is in the development and even PHC-string is not supported.
+// pub mod password_hash {
 
-    pub use argon2;
+//     pub use argon2;
 
-    use crate::{size::SIZE_32, Error, Result};
+//     use crate::{size::SIZE_32, Error, Result};
 
-    /// Argon2id
-    ///
-    /// Algorithm: Argon2id
-    ///
-    /// Version: 19 (0x13)
-    ///
-    /// Memory cost: 19456
-    ///
-    /// Time(number of iterations): 2
-    ///
-    /// Parallelism: 1
-    ///
-    /// Length: 32-byte
-    ///
-    /// # Example
-    ///```
-    /// let password = b"hello 0123 password";
-    ///
-    /// let salt = xck::rand::gen_16();
-    ///
-    /// let hash = xck::hash::password_hash::argon2id(password, &salt).unwrap();
-    ///
-    /// println!("{:?}",hash);
-    ///```
-    pub fn argon2id(password: impl AsRef<[u8]>, salt: impl AsRef<[u8]>) -> Result<[u8; SIZE_32]> {
-        let mut buf = [0u8; SIZE_32];
+//     /// Argon2id
+//     ///
+//     /// Algorithm: Argon2id
+//     ///
+//     /// Version: 19 (0x13)
+//     ///
+//     /// Memory cost: 19456
+//     ///
+//     /// Time(number of iterations): 2
+//     ///
+//     /// Parallelism: 1
+//     ///
+//     /// Length: 32-byte
+//     ///
+//     /// # Example
+//     ///```
+//     /// let password = b"hello 0123 password";
+//     ///
+//     /// let salt = xck::rand::gen_16();
+//     ///
+//     /// let hash = xck::hash::password_hash::argon2id(password, &salt).unwrap();
+//     ///
+//     /// println!("{:?}",hash);
+//     ///```
+//     pub fn argon2id(password: impl AsRef<[u8]>, salt: impl AsRef<[u8]>) -> Result<[u8; SIZE_32]> {
+//         let mut buf = [0u8; SIZE_32];
 
-        argon2::Argon2::default()
-            .hash_password_into(password.as_ref(), salt.as_ref(), &mut buf)
-            .map_err(|err| Error::new(err.to_string()))?;
-        Ok(buf)
-    }
+//         argon2::Argon2::default()
+//             .hash_password_into(password.as_ref(), salt.as_ref(), &mut buf)
+//             .map_err(|err| Error::new(err.to_string()))?;
+//         Ok(buf)
+//     }
 
-    /// Argon2id With Secret
-    ///
-    /// Algorithm: Argon2id
-    ///
-    /// Version: 19 (0x13)
-    ///
-    /// Memory cost: 19456
-    ///
-    /// Time(number of iterations): 2
-    ///
-    /// Parallelism: 1
-    ///
-    /// Length: 32-byte
-    ///
-    /// # Example
-    ///```
-    /// let password = b"hello 0123 password";
-    ///
-    /// let salt = xck::rand::gen_16();
-    ///
-    /// let secret = xck::rand::gen_32();
-    ///
-    /// let hash = xck::hash::password_hash::argon2id_with_secret(password, &salt, &secret).unwrap();
-    ///
-    /// println!("{:?}",hash);
-    ///```
-    pub fn argon2id_with_secret(
-        password: impl AsRef<[u8]>,
-        salt: impl AsRef<[u8]>,
-        secret: impl AsRef<[u8]>,
-    ) -> Result<[u8; SIZE_32]> {
-        let mut buf = [0u8; SIZE_32];
+//     /// Argon2id With Secret
+//     ///
+//     /// Algorithm: Argon2id
+//     ///
+//     /// Version: 19 (0x13)
+//     ///
+//     /// Memory cost: 19456
+//     ///
+//     /// Time(number of iterations): 2
+//     ///
+//     /// Parallelism: 1
+//     ///
+//     /// Length: 32-byte
+//     ///
+//     /// # Example
+//     ///```
+//     /// let password = b"hello 0123 password";
+//     ///
+//     /// let salt = xck::rand::gen_16();
+//     ///
+//     /// let secret = xck::rand::gen_32();
+//     ///
+//     /// let hash = xck::hash::password_hash::argon2id_with_secret(password, &salt, &secret).unwrap();
+//     ///
+//     /// println!("{:?}",hash);
+//     ///```
+//     pub fn argon2id_with_secret(
+//         password: impl AsRef<[u8]>,
+//         salt: impl AsRef<[u8]>,
+//         secret: impl AsRef<[u8]>,
+//     ) -> Result<[u8; SIZE_32]> {
+//         let mut buf = [0u8; SIZE_32];
 
-        argon2::Argon2::new_with_secret(
-            secret.as_ref(),
-            argon2::Algorithm::Argon2id,
-            argon2::Version::V0x13,
-            argon2::Params::default(),
-        )
-        .map_err(|err| Error::new(err.to_string()))?
-        .hash_password_into(password.as_ref(), salt.as_ref(), &mut buf)
-        .map_err(|err| Error::new(err.to_string()))?;
+//         argon2::Argon2::new_with_secret(
+//             secret.as_ref(),
+//             argon2::Algorithm::Argon2id,
+//             argon2::Version::V0x13,
+//             argon2::Params::default(),
+//         )
+//         .map_err(|err| Error::new(err.to_string()))?
+//         .hash_password_into(password.as_ref(), salt.as_ref(), &mut buf)
+//         .map_err(|err| Error::new(err.to_string()))?;
 
-        Ok(buf)
-    }
-}
+//         Ok(buf)
+//     }
+// }
