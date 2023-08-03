@@ -2,7 +2,7 @@ use ed25519_dalek::{Signer, Verifier};
 
 use crate::{
     rand::Rand,
-    size::{SIZE_32, SIZE_64},
+    size::{SIZE_32, SIZE_64, SIZE_234, SIZE_51},
     Error, Result,
 };
 
@@ -174,4 +174,30 @@ pub fn x25519_diffie_hellman(
         static_secret.diffie_hellman(&x25519_dalek::PublicKey::from(their_public_key.to_owned()));
 
     shared_secret.to_bytes()
+}
+
+
+pub fn ssh_ed25519_gen_private_key() -> Result<[u8; SIZE_234]> {
+    let private_key: [u8; SIZE_234] =
+        ssh_key::PrivateKey::random(&mut crate::rand::OsRng, ssh_key::Algorithm::Ed25519)
+            .map_err(|err| Error::new(err.to_string()))?
+            .to_bytes()
+            .map_err(|err| Error::new(err.to_string()))?
+            .as_slice()
+            .try_into()
+            .unwrap();
+
+    Ok(private_key)
+}
+
+pub fn ssh_ed25519_gen_public_key(private_key: &[u8; SIZE_234]) -> Result<[u8; SIZE_51]> {
+    let public_key: [u8; SIZE_51] = ssh_key::PrivateKey::from_bytes(private_key)
+        .map_err(|err| Error::new(err.to_string()))?
+        .public_key()
+        .to_bytes()
+        .map_err(|err| Error::new(err.to_string()))?
+        .try_into()
+        .unwrap();
+
+    Ok(public_key)
 }
