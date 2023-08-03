@@ -1,4 +1,19 @@
-use aead::{Aead, AeadInPlace, Buffer, KeyInit, Payload};
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
+#[cfg(feature = "alloc")]
+use aead::{Aead, Payload};
+
+#[cfg(not(feature = "alloc"))]
+use aead::AeadInPlace;
+
+#[cfg(not(feature = "alloc"))]
+pub use aead::Buffer;
+
+use aead:: KeyInit;
 
 use crate::{
     size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
@@ -18,6 +33,7 @@ type Aes192Gcm = aes_gcm::AesGcm<aes_gcm::aes::Aes192, aead::consts::U12>;
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is cipher bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_256_gcm_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -43,6 +59,7 @@ pub fn aes_256_gcm_decrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is plain bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_256_gcm_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -68,6 +85,7 @@ pub fn aes_256_gcm_encrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is cipher bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_192_gcm_decrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -78,7 +96,7 @@ pub fn aes_192_gcm_decrypt(
 }
 
 pub fn aes_192_gcm_decrypt_in_place(
-    key: &[u8; SIZE_32],
+    key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
@@ -93,6 +111,7 @@ pub fn aes_192_gcm_decrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is plain bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_192_gcm_encrypt(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
@@ -103,7 +122,7 @@ pub fn aes_192_gcm_encrypt(
 }
 
 pub fn aes_192_gcm_encrypt_in_place(
-    key: &[u8; SIZE_32],
+    key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
@@ -118,6 +137,7 @@ pub fn aes_192_gcm_encrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is cipher bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_128_gcm_decrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -128,7 +148,7 @@ pub fn aes_128_gcm_decrypt(
 }
 
 pub fn aes_128_gcm_decrypt_in_place(
-    key: &[u8; SIZE_32],
+    key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
@@ -143,6 +163,7 @@ pub fn aes_128_gcm_decrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is plain bytes.
+#[cfg(feature = "alloc")]
 pub fn aes_128_gcm_encrypt(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
@@ -153,7 +174,7 @@ pub fn aes_128_gcm_encrypt(
 }
 
 pub fn aes_128_gcm_encrypt_in_place(
-    key: &[u8; SIZE_32],
+    key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
@@ -168,6 +189,7 @@ pub fn aes_128_gcm_encrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is cipher bytes.
+#[cfg(feature = "alloc")]
 pub fn xchacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -203,6 +225,7 @@ pub fn xchacha20_poly1305_decrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is plain bytes.
+#[cfg(feature = "alloc")]
 pub fn xchacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
@@ -238,6 +261,7 @@ pub fn xchacha20_poly1305_encrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is cipher bytes.
+#[cfg(feature = "alloc")]
 pub fn chacha20_poly1305_decrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -273,6 +297,7 @@ pub fn chacha20_poly1305_decrypt_in_place(
 /// If you want Aad to be empty, use &[].
 ///
 /// Message is plain bytes.
+#[cfg(feature = "alloc")]
 pub fn chacha20_poly1305_encrypt(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
@@ -301,6 +326,7 @@ pub fn chacha20_poly1305_encrypt_in_place(
     )
 }
 
+#[cfg(feature = "alloc")]
 fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Result<Vec<u8>> {
     let plain = aead
         .decrypt(
@@ -315,6 +341,7 @@ fn aead_decrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], cipher: &[u8]) -> Res
     Ok(plain)
 }
 
+#[cfg(feature = "alloc")]
 fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Result<Vec<u8>> {
     let cipher = aead
         .encrypt(
