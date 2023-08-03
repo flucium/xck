@@ -30,7 +30,6 @@ Click here for details on command operations: [*in preparation*](#)
 
 ## X25519
 
-
 ## SHA2
 SHA256
 
@@ -42,13 +41,23 @@ SHA512/256
 ## Symmetric
 AES-128-GCM
 
+AES-128-GCM *alloc*
+
 AES-192-GCM
+
+AES-192-GCM *alloc*
 
 AES-256-GCM
 
+AES-256-GCM *alloc*
+
 ChaCha20-Poly1305
 
+ChaCha20-Poly1305 *alloc*
+
 XChaCha20-Poly1305
+
+XChaCha20-Poly1305 *alloc*
 
 ## Asymmetric
 Ed25519
