@@ -43,13 +43,13 @@ pub fn aes_256_gcm_decrypt(
     aead_decrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
-pub fn aes_256_gcm_decrypt_in_place(
+pub fn aes_256_gcm_decrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_decrypt_in_place(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_decrypt_alloc(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// AES 256 Encrypt
@@ -69,13 +69,13 @@ pub fn aes_256_gcm_encrypt(
     aead_encrypt(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
-pub fn aes_256_gcm_encrypt_in_place(
+pub fn aes_256_gcm_encrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_encrypt_in_place(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_encrypt_alloc(Aes256Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// AES 192 Decrypt
@@ -95,13 +95,13 @@ pub fn aes_192_gcm_decrypt(
     aead_decrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
-pub fn aes_192_gcm_decrypt_in_place(
+pub fn aes_192_gcm_decrypt_alloc(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_decrypt_in_place(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_decrypt_alloc(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// AES 192 Encrypt
@@ -121,13 +121,13 @@ pub fn aes_192_gcm_encrypt(
     aead_encrypt(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
-pub fn aes_192_gcm_encrypt_in_place(
+pub fn aes_192_gcm_encrypt_alloc(
     key: &[u8; SIZE_24],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_encrypt_in_place(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_encrypt_alloc(Aes192Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// AES 128 Decrypt
@@ -147,13 +147,13 @@ pub fn aes_128_gcm_decrypt(
     aead_decrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, cipher)
 }
 
-pub fn aes_128_gcm_decrypt_in_place(
+pub fn aes_128_gcm_decrypt_alloc(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_decrypt_in_place(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_decrypt_alloc(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// AES 128 Encrypt
@@ -173,13 +173,13 @@ pub fn aes_128_gcm_encrypt(
     aead_encrypt(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, plain)
 }
 
-pub fn aes_128_gcm_encrypt_in_place(
+pub fn aes_128_gcm_encrypt_alloc(
     key: &[u8; SIZE_16],
     nonce: &[u8; SIZE_12],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_encrypt_in_place(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
+    aead_encrypt_alloc(Aes128Gcm::new_from_slice(key).unwrap(), nonce, aad, buffer)
 }
 
 /// XChaCha20 Poly1305 Decrypt
@@ -204,13 +204,13 @@ pub fn xchacha20_poly1305_decrypt(
     )
 }
 
-pub fn xchacha20_poly1305_decrypt_in_place(
+pub fn xchacha20_poly1305_decrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_decrypt_in_place(
+    aead_decrypt_alloc(
         XChaCha20Poly1305::new_from_slice(key).unwrap(),
         nonce,
         aad,
@@ -240,13 +240,13 @@ pub fn xchacha20_poly1305_encrypt(
     )
 }
 
-pub fn xchacha20_poly1305_encrypt_in_place(
+pub fn xchacha20_poly1305_encrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_encrypt_in_place(
+    aead_encrypt_alloc(
         XChaCha20Poly1305::new_from_slice(key).unwrap(),
         nonce,
         aad,
@@ -276,13 +276,13 @@ pub fn chacha20_poly1305_decrypt(
     )
 }
 
-pub fn chacha20_poly1305_decrypt_in_place(
+pub fn chacha20_poly1305_decrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_decrypt_in_place(
+    aead_decrypt_alloc(
         ChaCha20Poly1305::new_from_slice(key).unwrap(),
         nonce,
         aad,
@@ -312,13 +312,13 @@ pub fn chacha20_poly1305_encrypt(
     )
 }
 
-pub fn chacha20_poly1305_encrypt_in_place(
+pub fn chacha20_poly1305_encrypt_alloc(
     key: &[u8; SIZE_32],
     nonce: &[u8; SIZE_24],
     aad: &[u8],
     buffer: &mut dyn Buffer,
 ) -> Result<()> {
-    aead_encrypt_in_place(
+    aead_encrypt_alloc(
         ChaCha20Poly1305::new_from_slice(key).unwrap(),
         nonce,
         aad,
@@ -356,7 +356,7 @@ fn aead_encrypt(aead: impl Aead, nonce: &[u8], aad: &[u8], plain: &[u8]) -> Resu
     Ok(cipher)
 }
 
-fn aead_encrypt_in_place(
+fn aead_encrypt_alloc(
     aead: impl AeadInPlace,
     nonce: &[u8],
     aad: &[u8],
@@ -366,7 +366,7 @@ fn aead_encrypt_in_place(
         .map_err(|err| Error::new(err.to_string()))
 }
 
-fn aead_decrypt_in_place(
+fn aead_decrypt_alloc(
     aead: impl AeadInPlace,
     nonce: &[u8],
     aad: &[u8],
