@@ -7,7 +7,6 @@ use alloc::vec::Vec;
 #[cfg(feature = "alloc")]
 use aead::{Aead, Payload};
 
-
 use aead::AeadInPlace;
 
 pub use aead::Buffer;
