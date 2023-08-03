@@ -4,7 +4,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use aead::rand_core::le;
 use clap::{Args, Parser, Subcommand};
 
 const NAME: &str = "XCK";
