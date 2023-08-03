@@ -7,11 +7,7 @@ use alloc::vec::Vec;
 #[cfg(feature = "alloc")]
 use aead::{Aead, Payload};
 
-use aead::AeadInPlace;
-
-pub use aead::Buffer;
-
-use aead:: KeyInit;
+use aead::{AeadInPlace,Buffer,KeyInit};
 
 use crate::{
     size::{SIZE_12, SIZE_16, SIZE_24, SIZE_32},
