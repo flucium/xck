@@ -2,7 +2,7 @@ use ed25519_dalek::{Signer, Verifier};
 
 use crate::{
     rand::Rand,
-    size::{SIZE_32, SIZE_64, SIZE_234, SIZE_51},
+    size::{SIZE_234, SIZE_32, SIZE_51, SIZE_64},
     Error, Result,
 };
 
@@ -176,7 +176,14 @@ pub fn x25519_diffie_hellman(
     shared_secret.to_bytes()
 }
 
-
+/// SSH-Ed25519 Generate PrivateKey
+/// 
+/// # Example
+/// ```
+/// let private_key = ssh_ed25519_gen_private_key().unwrap();
+/// 
+/// println!("binary private-key{:?}",private_key);
+/// ```
 pub fn ssh_ed25519_gen_private_key() -> Result<[u8; SIZE_234]> {
     let private_key: [u8; SIZE_234] =
         ssh_key::PrivateKey::random(&mut crate::rand::OsRng, ssh_key::Algorithm::Ed25519)
@@ -190,6 +197,16 @@ pub fn ssh_ed25519_gen_private_key() -> Result<[u8; SIZE_234]> {
     Ok(private_key)
 }
 
+/// SSH-Ed25519 Generate PublicKey
+/// 
+/// # Example
+/// ```
+/// let private_key = ssh_ed25519_gen_private_key().unwrap();
+/// 
+/// let public_key = ssh_ed25519_gen_public_key(private_key).unwrap();
+/// 
+/// println!("{:?}",public_key);
+/// ```
 pub fn ssh_ed25519_gen_public_key(private_key: &[u8; SIZE_234]) -> Result<[u8; SIZE_51]> {
     let public_key: [u8; SIZE_51] = ssh_key::PrivateKey::from_bytes(private_key)
         .map_err(|err| Error::new(err.to_string()))?
