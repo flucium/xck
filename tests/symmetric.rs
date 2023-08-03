@@ -1,5 +1,6 @@
 #[test]
-fn aes_256_gcm_encrypt() {
+#[cfg(feature = "alloc")]
+fn aes_256_gcm_encrypt_alloc() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
         54, 51, 85, 130, 172, 177, 0, 252, 130, 32, 174, 81,
@@ -16,13 +17,14 @@ fn aes_256_gcm_encrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::aes_256_gcm_encrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE).unwrap(),
+        xck::symmetric::aes_256_gcm_encrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE).unwrap(),
         TEST_CIPHER
     );
 }
 
 #[test]
-fn aes_256_gcm_decrypt() {
+#[cfg(feature = "alloc")]
+fn aes_256_gcm_decrypt_alloc() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
         54, 51, 85, 130, 172, 177, 0, 252, 130, 32, 174, 81,
@@ -39,12 +41,13 @@ fn aes_256_gcm_decrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::aes_256_gcm_decrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER).unwrap(),
+        xck::symmetric::aes_256_gcm_decrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER).unwrap(),
         TEST_MESSAGE
     );
 }
 
 #[test]
+#[cfg(feature = "alloc")]
 fn xchacha20_poly1305_decrypt() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
@@ -64,14 +67,15 @@ fn xchacha20_poly1305_decrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::xchacha20_poly1305_decrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER)
+        xck::symmetric::xchacha20_poly1305_decrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER)
             .unwrap(),
         TEST_MESSAGE
     );
 }
 
 #[test]
-fn xchacha20_poly1305_encrypt() {
+#[cfg(feature = "alloc")]
+fn xchacha20_poly1305_encrypt_alloc() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
         54, 51, 85, 130, 172, 177, 0, 252, 130, 32, 174, 81,
@@ -90,14 +94,15 @@ fn xchacha20_poly1305_encrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::xchacha20_poly1305_encrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE)
+        xck::symmetric::xchacha20_poly1305_encrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE)
             .unwrap(),
         TEST_CIPHER
     );
 }
 
 #[test]
-fn chacha20_poly1305_decrypt() {
+#[cfg(feature = "alloc")]
+fn chacha20_poly1305_decrypt_alloc() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
         54, 51, 85, 130, 172, 177, 0, 252, 130, 32, 174, 81,
@@ -114,14 +119,16 @@ fn chacha20_poly1305_decrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::chacha20_poly1305_decrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER)
+        xck::symmetric::chacha20_poly1305_decrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_CIPHER)
             .unwrap(),
         TEST_MESSAGE
     );
 }
 
+
 #[test]
-fn chacha20_poly1305_encrypt() {
+#[cfg(feature = "alloc")]
+fn chacha20_poly1305_encrypt_alloc() {
     const TEST_KEY: [u8; 32] = [
         57, 175, 86, 245, 102, 95, 243, 137, 254, 235, 187, 7, 87, 88, 175, 190, 102, 82, 188, 163,
         54, 51, 85, 130, 172, 177, 0, 252, 130, 32, 174, 81,
@@ -138,7 +145,7 @@ fn chacha20_poly1305_encrypt() {
     ];
 
     assert_eq!(
-        xck::symmetric::chacha20_poly1305_encrypt(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE)
+        xck::symmetric::chacha20_poly1305_encrypt_alloc(&TEST_KEY, &TEST_NONCE, &[], &TEST_MESSAGE)
             .unwrap(),
         TEST_CIPHER
     );
