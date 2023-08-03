@@ -194,7 +194,7 @@ pub fn pem_decode(pem: &[u8]) -> Result<(Label, [u8; SIZE_32])> {
 
     let (label, bytes) =
         pem_rfc7468::decode(pem, &mut buf).map_err(|err| Error::new(err.to_string()))?;
-
+    
     if bytes.len() != SIZE_32 {
         Err(Error::new("".to_owned()))?
     }
